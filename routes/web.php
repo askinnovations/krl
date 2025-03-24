@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ProductController;
@@ -44,13 +44,13 @@ Route::get('/', function () {
 
 
         // Categories
-        Route::prefix('categories')->group(function () {
-            Route::get('/', [CategoryController::class, 'index'])->name('admin.categories.index');
-            Route::get('/create', [CategoryController::class, 'create'])->name('admin.categories.create');
-            Route::post('/store', [CategoryController::class, 'store'])->name('admin.categories.store');
-            Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('admin.categories.edit');
-            Route::put('/update/{id}', [CategoryController::class, 'update'])->name('admin.categories.update');
-            Route::delete('/delete/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.delete');
+        Route::prefix('complaint')->group(function () {
+            Route::get('/', [ComplaintController::class, 'index'])->name('admin.complaint.index');
+            Route::get('/create', [ComplaintController::class, 'create'])->name('admin.complaint.create');
+            Route::post('/store', [ComplaintController::class, 'store'])->name('admin.complaint.store');
+            Route::get('/edit/{id}', [ComplaintController::class, 'edit'])->name('admin.complaint.edit');
+            Route::put('/update/{id}', [ComplaintController::class, 'update'])->name('admin.complaint.update');
+            Route::delete('/delete/{id}', [ComplaintController::class, 'destroy'])->name('admin.complaint.delete');
         });
         // SubCategories
         Route::prefix('subcategories')->group(function () {

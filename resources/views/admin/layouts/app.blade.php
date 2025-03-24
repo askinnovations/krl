@@ -1,15 +1,13 @@
 <!doctype html>
 <html lang="en" >
-
     <head>
-
         <meta charset="utf-8" />
-        <title>Kisan Trade</title>
+        <title>DR. B2B</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="kisan Trade" name="description" />
-        <meta content="" name="author" />
+        <meta content="B2B" name="description" />
+        <meta content="ASK Innovations" name="ASK Innovations" />
         <!-- App favicon -->
-        <link rel="shortcut icon" href="{{ asset('backend/images/fav.jpg') }}">
+        <link rel="shortcut icon" href="{{ asset('backend/images/logo.png') }}">
 
         <!-- Plugin CSS -->
         <link href="{{ asset('backend/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css') }}" rel="stylesheet" type="text/css" />

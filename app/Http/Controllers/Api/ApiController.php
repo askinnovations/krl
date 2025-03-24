@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator; // ✅ Validator import karein
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Complaint;
 use App\Models\User; // ✅ User Model import karein
 use App\Models\Banner; // ✅ Banner Model import karein
 use App\Models\Category; // ✅ Category Model import karein
@@ -28,11 +30,21 @@ class ApiController extends Controller
         return response()->json(['message' => 'API is working!']);
     }
 
-    // ✅ Mobile Number se Register aur OTP Generate
-
+  // ✅ Routes
     public function register(Request $request)
-{   
+    {   
     $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'you_are' => 'required|in:manufacturer,cnf/super stockist',
+        'pan_number' => 'required|string|max:10|unique:users',
+        'firm_number' => 'nullable|string|max:255',
+        'gst_number' => 'nullable|string|max:15',
+        'adhar_number' => 'nullable|string|max:12',
+        'address' => 'nullable|string',
+        'city' => 'nullable|string|max:100',
+        'state' => 'nullable|string|max:100',
+        'pincode' => 'nullable|string|max:10',
+        'industry' => 'required|in:food,chemical,insurance',
         'mobile_number' => 'required|string|max:20|unique:users',
     ]);
 
@@ -40,85 +52,86 @@ class ApiController extends Controller
         return response()->json(['errors' => $validator->errors()], 422);
     }
 
-    // ✅ OTP Generate karein
     $otp = rand(100000, 999999);
-
-    // ✅ Check if User already exists
+    
     $user = User::where('mobile_number', $request->mobile_number)->first();
-
+    
     if (!$user) {
-        // ✅ New User Create karein
         $user = User::create([
-            'email' => $request->email,
             'name' => $request->name,
-            'otp' => $otp,
-            'mobile_number' => $request->mobile_number,
+            'you_are' => $request->you_are,
+            'pan_number' => $request->pan_number,
+            'firm_number' => $request->firm_number,
+            'gst_number' => $request->gst_number,
+            'adhar_number' => $request->adhar_number,
             'address' => $request->address,
             'city' => $request->city,
-            'refer_code' => $request->refer_code,
+            'state' => $request->state,
+            'pincode' => $request->pincode,
+            'industry' => $request->industry,
+            'mobile_number' => $request->mobile_number,
+            'otp' => $otp,
+            'auth_token' => null // ✅ Token अभी जनरेट नहीं होगा
         ]);
-
-        // ✅ Token Generate & Store Karein (सिर्फ पहली बार)
-        $token = $user->createToken('auth_token')->plainTextToken;
-        $user->update(['auth_token' => $token]);
     } else {
-        // ✅ अगर पहले से टोकन है, तो वही वापस करें
-        $token = $user->auth_token;
+        $user->update(['otp' => $otp]);
     }
 
     return response()->json([
         'message' => 'OTP sent successfully',
         'otp' => $otp,
-        'user' => $user,
-        'token' => $token  // ✅ पुराना टोकन या नया टोकन वापस भेज रहे हैं
+        'user' => $user
     ], 201);
 }
 
 
+// ✅ Verify OTP (Agar Pehle Se Token Hai To Wahi Wapas Karo, Naya Generate Mat Karo)
+// ✅ Verify OTP Function (Token सिर्फ नए मोबाइल नंबर पर बनेगा)
+public function verifyOtp(Request $request)
+{
+    $request->validate([
+        'mobile_number' => 'required',
+        'otp' => 'required'
+    ]);
 
-    // ✅ OTP Verify API
-    public function verifyOtp(Request $request)
-    {
-    try {
-        Log::info('Verify OTP Request:', $request->all());
+    // यूजर को मोबाइल नंबर से खोजें
+    $user = User::where('mobile_number', $request->mobile_number)->first();
 
-        $validator = Validator::make($request->all(), [
-            'mobile_number' => 'required|string|max:20',
-            'otp' => 'required|string|max:6',
-        ]);
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
+    }
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+    // OTP चेक करें
+    if ($user->otp !== $request->otp) {
+        return response()->json(['message' => 'Invalid OTP'], 400);
+    }
 
-        $user = User::where('mobile_number', $request->mobile_number)
-                    ->where('otp', $request->otp)
-                    ->first();
+    // पहले से मौजूद टोकन को चेक करें
+    $existingToken = $user->tokens()->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'Invalid OTP'], 400);
-        }
-
-        // ✅ OTP Verify hone ke baad, OTP null karein
-        $user->update(['otp' => null]);
-
-        // ✅ पुराना टोकन वापस करें
+    if ($existingToken) {
         return response()->json([
             'message' => 'OTP verified successfully',
             'user' => $user,
-            'token' => $user->auth_token  // ✅ पहले से स्टोर टोकन वापस भेज रहे हैं
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
+            'token' => $existingToken->plainTextToken
+        ]);
     }
-   }
 
-   // ✅ Mobile Number Se Login API
-   
+    // अगर टोकन नहीं है, तो नया बनाएं
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'OTP verified successfully',
+        'user' => $user,
+        'token' => $token
+    ]);
+}
 
 
-   public function loginWithMobile(Request $request)
-   {
+
+// ✅ Login With Mobile (Naya Token Generate Nahi Hoga, Sirf OTP Bheja Jayega)
+public function loginWithMobile(Request $request)
+{
     $validator = Validator::make($request->all(), [
         'mobile_number' => 'required|string|max:20',
     ]);
@@ -130,23 +143,24 @@ class ApiController extends Controller
     $user = User::where('mobile_number', $request->mobile_number)->first();
 
     if ($user) {
-        // ✅ हर बार नया OTP जेनरेट करें
         $otp = rand(100000, 999999);
-        $user->update(['otp' => $otp]); // ✅ OTP डेटाबेस में सेव करें
+        $user->update(['otp' => $otp]);
 
-        // ✅ पुराना टोकन वापस करें
         return response()->json([
             'message' => 'OTP sent successfully',
-            'otp' => $otp,  // ✅ हर बार नया OTP भेजें
+            'otp' => $otp,
             'user' => $user,
-            'token' => $user->auth_token  // ✅ पहले से स्टोर टोकन वापस भेजें
+            'token' => $user->auth_token // ✅ Purana Token Hi Wapas Kiya Jayega, Naya Generate Nahi Hoga
         ], 200);
     } else {
         return response()->json([
             'message' => 'Please register this account'
         ], 404);
     }
-   }
+}
+
+
+
    
    public function profile(Request $request){
     if($request->user()){
@@ -161,7 +175,45 @@ class ApiController extends Controller
     }
    }
 
+   
 
+   
+   
+   public function updateProfile(Request $request)
+   {
+       // 🔍 Check if user is authenticated
+       $user = auth()->user();
+   
+       if (!$user) {
+           return response()->json([
+               'status' => false,
+               'message' => 'Unauthorized user'
+           ], 401);
+       }
+   
+       // 📝 Fields that can be updated
+       $updatableFields = [
+           'address', 'city', 'state', 'pincode', 'gst_no',
+           'aadhar_no', 'firm_name', 'industry_sector', 'you_are'
+       ];
+   
+       foreach ($updatableFields as $field) {
+           if ($request->has($field)) {
+               $user->$field = $request->$field;
+           }
+       }
+   
+       $user->save();
+   
+       return response()->json([
+           'status' => true,
+           'message' => 'Profile updated successfully',
+           'user' => $user
+       ], 200);
+   }
+   
+
+   
     public function logout(Request $request){
         $user = User::where('id',$request->user()->id)->first();
         if($user){
@@ -343,6 +395,8 @@ class ApiController extends Controller
                'quantity' => $quantity, // ✅ Ensure quantity is set
                'price' => $request->price,
                'description' => $request->description,
+               'user_id'         => $request->user_id,
+               
            ]);
        
            // ✅ Return JSON Response
@@ -396,13 +450,16 @@ class ApiController extends Controller
         if ($request->filled('description')) {
             $productsell->description = $request->description;
         }
+        if ($request->filled('user_id')) {
+            $productsell->user_id = $request->user_id;
+        }
 
         // Save updated data
         $productsell->save();
 
         return response()->json([
             'status' => true,
-            'message' => 'Product updated successfully',
+            'message' => 'Product Sell updated successfully',
             'product' => $productsell
         ]);
         } catch (\Exception $e) {
@@ -417,8 +474,7 @@ class ApiController extends Controller
     // ✅ Get Single Product Details
     public function show($id)
     {
-        $product = ProductSell::with('subcategory')->find($id);
-
+        $product = ProductSell::with(['subcategory', 'user'])->find($id);
         if (!$product) {
             return response()->json([
                 'status' => false,
@@ -505,7 +561,7 @@ class ApiController extends Controller
     // Return product details
     return response()->json([
         'status' => true,
-        'message' => 'Product details fetched successfully',
+        'message' => 'Product Sell lldetails fetched successfully',
         'product' => $product
     ], 200);
 
@@ -869,8 +925,136 @@ class ApiController extends Controller
         'remaining_coins' => $user->reward_points,
         'redeemed_product' => $redeemedProduct
     ]);
-    
    }
+
+
+
+
+    // outbox
+   public function getMyComplaints(Request $request)
+    {
+        // लॉगिन यूज़र की ID प्राप्त करें
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not authenticated'
+            ], 401);
+        }
+
+        // लॉगिन यूज़र द्वारा की गई सभी शिकायतें निकालें
+        $complaints = Complaint::where('user_id', $userId)->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'My complaints fetched successfully',
+            'total_complaints' => $complaints->count(),
+            'data' => $complaints
+        ]);
+    }
+  // कंप्लेंट सबमिट करने की API inobx ke liye hai 
+  public function storeComplaint(Request $request)
+  {
+    // अगर यूज़र लॉगिन नहीं है, तो एरर दें
+    if (!auth()->check()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Unauthorized! Please login first.'
+        ], 401);
+    }
+
+    // कंप्लेंट डेटा सेव करें
+    $complaint = Complaint::create([
+        'user_id' => auth()->id(), // जो कंप्लेंट कर रहा है
+        // 'against_user_id' => $request->against_user_id, // जिसके खिलाफ कंप्लेंट हो रही है
+        'name' => $request->name,
+        'mobile' => $request->mobile,
+        'pan' => $request->pan,
+        'gst_no' => $request->gst_no,
+        'aadhar_no' => $request->aadhar_no,
+        'address' => $request->address,
+        'pincode' => $request->pincode,
+        'city' => $request->city,
+        'state' => $request->state,
+        'description' => $request->description,
+    ]);
+
+    // यूज़र की डिटेल्स लाएं
+    $user = auth()->user();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Complaint submitted successfully',
+        'data' => [
+            'complaint' => $complaint,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'pan_number' => $user->pan_number,
+                'gst_number' => $user->gst_number,
+                'adhar_number' => $user->adhar_number,
+                'pincode' => $user->pincode,
+            ]
+        ]
+    ]);
+}
+
+
+  // कंप्लेंट डिटेल्स दिखाने की API
+  public function showComplaint($id)
+  {
+      $complaint = Complaint::with(['complainant'])->find($id);
+
+      if (!$complaint) {
+          return response()->json(['status' => false, 'message' => 'Complaint not found'], 404);
+      }
+
+      return response()->json([
+          'status' => true,
+          'complaint' => $complaint
+      ]);
+  }
+
+  public function getAllComplaints()
+  {
+      // सिर्फ सभी कंप्लेंट्स की जानकारी लाएं
+      $complaints = Complaint::all();
+  
+      return response()->json([
+          'status' => true,
+          'message' => 'All complaints fetched successfully',
+          'total_complaints' => $complaints->count(),
+          'data' => $complaints
+      ]);
+  }
+  
+  public function searchComplaintByPan(Request $request)
+{
+    $pan = $request->input('pan'); // Input से PAN नंबर लें
+
+    if (!$pan) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Please provide a PAN number to search'
+        ], 400);
+    }
+
+    $complaints = Complaint::where('pan', 'LIKE', "%$pan%")->get(); // Like Query
+
+    if ($complaints->isEmpty()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'No complaints found for the given PAN'
+        ], 404);
+    }
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Complaints fetched successfully',
+        'data' => $complaints
+    ], 200);
+}
 
 }
    

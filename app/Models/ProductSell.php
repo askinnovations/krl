@@ -9,7 +9,7 @@ class ProductSell extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['image', 'product_name', 'quantity', 'price', 'description'];
+    protected $fillable = ['image', 'product_name', 'quantity', 'price', 'description','user_id','subcategory_id','category_id'];
 
     public function category()
    {
@@ -21,10 +21,9 @@ class ProductSell extends Model
     return $this->belongsTo(Subcategory::class, 'subcategory_id');
    }
 
-  public function user()
-  {
-    return $this->belongsTo(User::class, 'user_id');
-  }
-
-
+   public function user()
+   {
+       return $this->belongsTo(User::class, 'user_id');
+   }
+   
 }

@@ -10,10 +10,15 @@
                 <div class="auth-full-page-content d-flex p-sm-5 p-4">
                     <div class="w-100">
                         <div class="auth-content my-auto">
-                            <div class="text-center">
-                                <h5 class="mb-0">Welcome Back, Admin!</h5>
-                                <p class="text-muted mt-2">Sign in to continue.</p>
-                            </div>
+                        <div class="mb-4 mb-md-5 text-center">
+                        <a href="#" class="d-block auth-logo">
+                            <img  src="{{ asset('backend/images/logo.png') }}"  alt="" height="28"> <span class="logo-txt">DR. B2B</span>
+                        </a>
+                        </div>
+                        <div class="text-center">
+                                            <h5 class="mb-0">Welcome Back !</h5>
+                                            <p class="text-muted mt-2">Sign in to continue to DR.B2B</p>
+                                        </div>
                             <form class="mt-4 pt-2" action="{{ route('admin.login.submit') }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
@@ -29,8 +34,8 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="mt-4 text-center">
-                            <p>© <script>document.write(new Date().getFullYear())</script> KisanTrade</p>
+                        <div class="mt-4 mt-md-5 text-center">
+                                        <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> DR. B2B   Created  <i class="mdi mdi-heart text-danger"></i> by ASK Innovations</p>
                         </div>
                     </div>
                 </div>

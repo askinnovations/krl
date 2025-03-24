@@ -13,10 +13,17 @@ Route::post('register', [ApiController::class, 'register']); // ✅ Mobile se Re
 Route::post('verify-otp', [ApiController::class, 'verifyOtp']); // ✅ OTP Verify
 Route::post('login', [ApiController::class, 'loginWithMobile']); // ✅ Mobile Se Login API
 
+
 Route::middleware(['auth:sanctum'])->group(function (){
     Route::post('logout', [ApiController::class, 'logout']);
     Route::get('profile', [ApiController::class, 'profile']);
-    
+    Route::post('update-profile', [ApiController::class, 'updateProfile']);
+    Route::get('/all-complaints', [ApiController::class, 'getAllComplaints']); // all complains
+    Route::get('/my-complaints', [ApiController::class, 'getMyComplaints']); //outbox
+    Route::post('/store-complaint', [ApiController::class, 'storeComplaint']); // inbox 
+    Route::get('/complaints/{id}', [ApiController::class, 'showComplaint']); // किसी एक कंप्लेंट की डिटेल
+    Route::get('/complaints/search', [ApiController::class, 'searchComplaintByPan']);
+
 });
 
 Route::get('/banners', [ApiController::class, 'getBanners']); // ✅ GET Banners API
@@ -45,7 +52,7 @@ Route::post('/refer', [ApiController::class, 'referProduct']); // Refer product
 
 // FeaturedProducts
 Route::get('/featured-products', [ApiController::class, 'getFeaturedProducts']); // FeaturedProducts
-Route::get('/products/{id}', [ApiController::class, 'show']); // Product details route
+Route::get('/products/{id}', [ApiController::class, 'show']); // FeaturedProductsProduct details route
 Route::get('/product-listing-data', [ApiController::class, 'getProductListingData']); // 1) GET subcategories + units
 Route::post('/product-listings', [ApiController::class, 'storeProductListing']); // 2) POST store new product listing
 Route::post('/demand-listings', [ApiController::class, 'storeDroductListing']); // DemandtListing from
