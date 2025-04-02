@@ -1031,30 +1031,28 @@ public function loginWithMobile(Request $request)
   
   public function searchComplaintByPan(Request $request)
 {
-    $pan = $request->input('pan'); // Input से PAN नंबर लें
+    $request->validate([
+        'pan' => 'required|string'
+    ]);
 
-    if (!$pan) {
+    $pan = strtolower($request->input('pan'));
+
+    $complaint = Complaint::whereRaw('LOWER(pan) = ?', [$pan])->first();
+
+    if (!$complaint) {
         return response()->json([
             'status' => false,
-            'message' => 'Please provide a PAN number to search'
-        ], 400);
-    }
-
-    $complaints = Complaint::where('pan', 'LIKE', "%$pan%")->get(); // Like Query
-
-    if ($complaints->isEmpty()) {
-        return response()->json([
-            'status' => false,
-            'message' => 'No complaints found for the given PAN'
+            'message' => 'Complaint not found'
         ], 404);
     }
 
     return response()->json([
         'status' => true,
-        'message' => 'Complaints fetched successfully',
-        'data' => $complaints
+        'message' => 'Complaint found',
+        'data' => $complaint
     ], 200);
 }
+
 
 }
    

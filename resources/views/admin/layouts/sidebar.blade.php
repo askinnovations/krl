@@ -16,19 +16,7 @@
                 </a>
             </li>
 
-            <li>
-                <a href="{{ route('admin.users') }}">
-                    <i data-feather="users"></i>
-                    <span data-key="t-dashboard">Profile</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('admin.complaint.index') }}">
-                    <i data-feather="share-2"></i>
-                    <span data-key="t-dashboard">complaint</span>
-                </a>
-            </li>
+            
         </ul>
 
        

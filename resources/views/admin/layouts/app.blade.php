@@ -2,9 +2,9 @@
 <html lang="en" >
     <head>
         <meta charset="utf-8" />
-        <title>DR. B2B</title>
+        <title>KRL</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="B2B" name="description" />
+        <meta content="KRL" name="description" />
         <meta content="ASK Innovations" name="ASK Innovations" />
         <!-- App favicon -->
         <link rel="shortcut icon" href="{{ asset('backend/images/logo.png') }}">

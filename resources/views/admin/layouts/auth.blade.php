@@ -1,12 +1,10 @@
 <!doctype html>
-<html lang="en" >
-
-    <head>
-
+<html lang="en">
+   <head>
         <meta charset="utf-8" />
-        <title>DR. B2B</title>
+        <title>KRL</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="B2B" name="description" />
+        <meta content="krl" name="description" />
         <meta content="ASK Innovations" name="ASK Innovations" />
        
         <!-- App favicon -->
@@ -33,7 +31,7 @@
     <body>
 
     @yield('content')
-    <script src="{{ asset('backend/libs/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('backend/libs/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('backend/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('backend/libs/metismenu/metisMenu.min.js') }}"></script>
         <script src="{{ asset('backend/libs/simplebar/simplebar.min.js') }}"></script>
