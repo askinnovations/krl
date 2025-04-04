@@ -33,23 +33,23 @@
                     <span data-key="t-consignment-booking">Consignment Booking</span>
                 </a>
                 <ul class="sub-menu" aria-expanded="false">
-                    <li><a href="{{ route('admin.consignment.index') }}" data-key="t-order-booking">Order Booking</a></li>
+                    <li><a href="{{ route('admin.orders.index') }}" data-key="t-order-booking">Order Booking</a></li>
                     <li><a href="{{ route('admin.consignment.index') }}" data-key="t-lr">LR / Consignment Note</a></li>
                     <li><a href="{{ route('admin.freight.index') }}" data-key="t-freight-bill">Freight Bill</a></li>
                 </ul>
             </li>
             <li>
-                            <a href="javascript:void(0);" class="has-arrow">
-                                <i data-feather="users"></i>
-                                <span data-key="t-hr">HR</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{route('admin.employees.index')}}" data-key="t-employees">Employees</a></li>
-                                <li><a href="{{route('admin.drivers.index')}}" data-key="t-drivers">Drivers</a></li>
-                                <li><a href="{{route('admin.attendance.index')}}" data-key="t-attendance">Attendance</a></li>
-                                <li><a href="{{route('admin.payroll.index')}}" data-key="t-payroll">Payroll</a></li>
-                            </ul>
-                        </li>
+                <a href="javascript:void(0);" class="has-arrow">
+                    <i data-feather="users"></i>
+                    <span data-key="t-hr">HR</span>
+                </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{route('admin.employees.index')}}" data-key="t-employees">Employees</a></li>
+                    <li><a href="{{route('admin.drivers.index')}}" data-key="t-drivers">Drivers</a></li>
+                    <li><a href="{{route('admin.attendance.index')}}" data-key="t-attendance">Attendance</a></li>
+                    <li><a href="{{route('admin.payroll.index')}}" data-key="t-payroll">Payroll</a></li>
+                </ul>
+            </li>
             <li>
                 <a href="javascript:void(0);" class="has-arrow">
                 <i data-feather="database"></i>

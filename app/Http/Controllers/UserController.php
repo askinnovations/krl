@@ -36,8 +36,6 @@ class UserController extends Controller
         'gst_number' => $request->gst_number,
     ]);
     
-   
-
     return redirect()->route('admin.users.index')->with('success', 'User added successfully.');
    }
    

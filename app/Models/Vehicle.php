@@ -59,4 +59,10 @@ class Vehicle extends Model
     //     'tax_valid_from' => 'date',
     //     'tax_valid_till' => 'date',
     // ];
+
+    public function orders()
+{
+    return $this->hasMany(Order::class, 'vehicle_id');
+}
+
 }

@@ -42,6 +42,18 @@ Route::prefix('admin')->group(function () {
         Route::delete('/delete/{id}', [VehicleController::class, 'destroy'])->name('admin.vehicles.delete');
     });
 
+   // orders Management
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index'); 
+        Route::get('/create', [OrderController::class, 'create'])->name('admin.orders.create');
+        Route::post('/store', [OrderController::class, 'store'])->name('admin.orders.store'); 
+        Route::get('/view/{id}', [OrderController::class, 'orders'])->name('admin.orders.view');  
+        Route::post('/update/{id}', [OrderController::class, 'update'])->name('admin.orders.update'); 
+        Route::delete('/delete/{id}', [OrderController::class, 'destroy'])->name('admin.orders.delete'); 
+    });
+    
+
+
     // Tyres Management
     Route::prefix('tyres')->group(function () {
         Route::get('/', [TyreController::class, 'index'])->name('admin.tyres.index');
@@ -59,7 +71,7 @@ Route::prefix('admin')->group(function () {
     });
 
     // Other Modulesadmin
-    Route::get('/order_booking/index', [ConsignmentNoteController::class, 'index'])->name('order_booking.index');
+    
     Route::get('/consignment-note/index', [ConsignmentNoteController::class, 'index'])->name('admin.consignment.index');
     Route::get('/freight-bill/index', [FreightBillController::class, 'index'])->name('admin.freight.index');
     Route::get('/stock-transfer/index', [StockTransferController::class, 'index'])->name('admin.stock.index');
