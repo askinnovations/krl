@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class OrderController extends Controller
+class DashboardController extends Controller
 {
     public function  index(){
-        return view('admin.order_booking.index');
+        return view('admin.dashboard');
     }
 }

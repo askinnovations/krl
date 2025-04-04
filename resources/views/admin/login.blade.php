@@ -12,12 +12,12 @@
                         <div class="auth-content my-auto">
                         <div class="mb-4 mb-md-5 text-center">
                         <a href="#" class="d-block auth-logo">
-                            <img  src="{{ asset('backend/images/logo.png') }}"  alt="" height="28"> <span class="logo-txt">DR. B2B</span>
+                            <img  src="{{ asset('backend/images/logo.png') }}"  alt="" height="50"><span class="logo-txt">Khandelwal Roadlines</span>
                         </a>
                         </div>
                         <div class="text-center">
                                             <h5 class="mb-0">Welcome Back !</h5>
-                                            <p class="text-muted mt-2">Sign in to continue to DR.B2B</p>
+                                            <p class="text-muted mt-2">Sign in to continue to Khandelwal Roadlines</p>
                                         </div>
                             <form class="mt-4 pt-2" action="{{ route('admin.login.submit') }}" method="POST">
                                 @csrf
@@ -35,7 +35,7 @@
                             </form>
                         </div>
                         <div class="mt-4 mt-md-5 text-center">
-                                        <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> DR. B2B   Created  <i class="mdi mdi-heart text-danger"></i> by ASK Innovations</p>
+                                        <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> Khandelwal Roadlines   Created  <i class="mdi mdi-heart text-danger"></i> by ASK Innovations</p>
                         </div>
                     </div>
                 </div>
