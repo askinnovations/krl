@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     EmployeeController, PayrollController, Auth\LoginController, AdminDashboardController,
-    UserController, TyreController, WarehouseController, DashboardController, OrderController,
+    UserController, TyreController, WarehouseController,OrderController,
     ConsignmentNoteController, FreightBillController, StockTransferController, DriverController,
     AttendanceController, MaintenanceController, VehicleController
 };
@@ -58,9 +58,8 @@ Route::prefix('admin')->group(function () {
         Route::delete('/delete/{id}', [WarehouseController::class, 'destroy'])->name('admin.warehouse.delete');
     });
 
-    // Other Modules
-    Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('admin.dashboard.index');
-    Route::get('/order/index', [OrderController::class, 'index'])->name('admin.order.index');
+    // Other Modulesadmin
+    Route::get('/order_booking/index', [ConsignmentNoteController::class, 'index'])->name('order_booking.index');
     Route::get('/consignment-note/index', [ConsignmentNoteController::class, 'index'])->name('admin.consignment.index');
     Route::get('/freight-bill/index', [FreightBillController::class, 'index'])->name('admin.freight.index');
     Route::get('/stock-transfer/index', [StockTransferController::class, 'index'])->name('admin.stock.index');
@@ -68,5 +67,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/drivers/index', [DriverController::class, 'index'])->name('admin.drivers.index');
     Route::get('/attendance/index', [AttendanceController::class, 'index'])->name('admin.attendance.index');
     Route::get('/payroll/index', [PayrollController::class, 'index'])->name('admin.payroll.index');
-    Route::get('/maintenance/index', [MaintenanceController::class, 'index'])->name('admin.maintenance.index');
+    // Route::get('/maintenance/index', [MaintenanceController::class, 'index'])->name('admin.maintenance.index');
+
+    
 });

@@ -53,7 +53,7 @@
                         </div><!-- end col -->
 
                         <div class="col-xl-6 col-md-6">
-                            <!-- card -->a
+                            <!-- card -->
                             <div class="card card-h-100">
                                 <!-- card body -->
                                 <div class="card-body">
