@@ -19,21 +19,15 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'otp',
         'name',
-        'you_are',
-        'pan_number',
-        'firm_number',
+        'email',
         'gst_number',
         'mobile_number',
-        'adhar_number',
         'address',
-        'city',
-        'state',
-        'pincode',
-        'industry'
-        
-
+    ];
+    // ✅ JSON से Array में Convert करने के लिए
+    protected $casts = [
+        'address' => 'array',
     ];
 
     /**

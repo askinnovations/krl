@@ -15,6 +15,28 @@
                     <span data-key="t-dashboard">Dashboard</span>
                 </a>
             </li>
+            <li>
+                <a href="javascript:void(0);" class="has-arrow">
+                    <i data-feather="truck"></i>
+                    <span data-key="t-fleet">Fleet</span>
+                </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{ route('admin.vehicles.index') }}" data-key="t-vehicles">Vehicles</a></li>
+                    <li><a href="#" data-key="t-maintenance">Maintenance</a></li>
+                    <li><a href="#" data-key="t-tyres">Tyres</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="javascript:void(0);" class="has-arrow">
+                <i data-feather="database"></i>
+                <span data-key="t-master">Master</span>
+                </a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li><a href="{{ route('admin.users.index') }}" data-key="t-customer">Customer</a></li>
+                </ul>
+            </li>
+
+            
 
             
         </ul>
