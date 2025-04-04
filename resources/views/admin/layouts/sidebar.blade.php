@@ -86,7 +86,7 @@
                         <span data-key="t-fleet">Fleet</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('admin.vehicles.index') }}" data-key="t-vehicles">Vehicles</a></li>
+                        <li><a href="vehicle.html" data-key="t-vehicles">Vehicles</a></li>
                         <li><a href="{{ route('admin.maintenance.index') }}" data-key="t-maintenance">Maintenance</a></li>
                         <li><a href="{{ route('admin.tyres.index') }}" data-key="t-tyres">Tyres</a></li>
                     </ul>

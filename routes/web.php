@@ -1,7 +1,7 @@
 <?php
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PayrollController;
-use App\Http\Controllers\VehicleController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AdminDashboardController;
@@ -78,7 +78,7 @@ Route::get('/', function () {
     Route::get('/admin/payroll/index',[PayrollController::class,'index'])->name('admin.payroll.index');
 
     //vehicles
-    Route::get('/admin/vehicles/index',[VehicleController::class,'index'])->name('admin.vehicles.index');
+   
 
     //Maintenance
     Route::get('/admin/maintenance/index',[MaintenanceController::class,'index'])->name('admin.maintenance.index');
