@@ -49,7 +49,6 @@ class Order extends Model
         'document_no',
         'document_name',
         'document_date',
-        'invoice_no',
         'valid_upto',
 
         // Freight Details
