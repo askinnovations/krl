@@ -64,9 +64,11 @@
                             <a href="#" class="btn btn-sm btn-light view-btn">
                                 <i class="fas fa-eye text-primary"></i>
                             </a>
-
-                                <a href="{{ route('admin.orders.edit', ['id' => $order->id]) }}" class="btn btn-sm btn-light edit-btn"><i class="fas fa-pen text-warning"></i></a>
-                                <button class="btn btn-sm btn-light delete-btn"><i class="fas fa-trash text-danger"></i></button>
+                            
+                            <a href="{{ route('admin.orders.edit', ['id' => $order->id]) }}" class="btn btn-sm btn-light edit-btn">
+                                    <i class="fas fa-pen text-warning"></i>
+                             </a>
+                              <button class="btn btn-sm btn-light delete-btn"><i class="fas fa-trash text-danger"></i></button>
                             </td>
                         </tr>
                         @endforeach

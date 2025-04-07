@@ -233,72 +233,85 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
               </div>
             </div>
+
+                                                            <!-- Cargo Description Section -->
+              <div class="row mt-4">
+                  <div class="col-12">
+                      <h5 class="mb-3 pb-3">📦 Cargo Description</h5>
+
+                      <!-- Documentation Selection -->
+                      <div class="mb-3 d-flex gap-3">
+                              <div class="form-check">
+                                  <input class="form-check-input" type="radio" name="cargo_description_type" id="singleDoc" value="single" checked>
+                                  <label class="form-check-label" for="singleDoc">Single Document</label>
+                              </div>
+                              <div class="form-check">
+                                  <input class="form-check-input" type="radio" name="cargo_description_type" id="multipleDoc" value="multiple">
+                                  <label class="form-check-label" for="multipleDoc">Multiple Documents</label>
+                              </div>
+                          </div>
+
+                          <!-- Cargo Details Table -->
+                          <div class="table-responsive">
+                              <table class="table table-bordered align-middle text-center">
+                                  <thead>
+                                      <tr>
+                                          <th>No. of Packages</th>
+                                          <th>Packaging Type</th>
+                                          <th>Description</th>
+                                          <th>Actual Weight (kg)</th>
+                                          <th>Charged Weight (kg)</th>
+                                          <th>Document No.</th>
+                                          <th>Document Name</th>
+                                          <th>Document Date</th>
+                                          <th>Eway Bill</th>
+                                          <th>Valid Upto</th>
+                                          <th>Action</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody id="cargoTableBody">
+                                      <tr>
+                                          <td><input type="number" class="form-control" name="cargo[0][packages_no]" placeholder="0"></td>
+                                          <td>
+                                              <select class="form-select" name="cargo[0][package_type]">
+                                                  <option>Pallets</option>
+                                                  <option>Cartons</option>
+                                                  <option>Bags</option>
+                                              </select>
+                                          </td>
+                                          <td><input type="text" class="form-control" name="cargo[0][package_description]" placeholder="Enter description"></td>
+                                          <td><input type="number" class="form-control" name="cargo[0][actual_weight]" placeholder="0"></td>
+                                          <td><input type="number" class="form-control" name="cargo[0][charged_weight]" placeholder="0"></td>
+                                          <td><input type="text" class="form-control" name="cargo[0][document_no]" placeholder="Doc No."></td>
+                                          <td><input type="text" class="form-control" name="cargo[0][document_name]" placeholder="Doc Name"></td>
+                                          <td><input type="date" class="form-control" name="cargo[0][document_date]"></td>
+                                          <td><input type="text" class="form-control" name="cargo[0][eway_bill]" placeholder="Eway Bill No."></td>
+                                          <td><input type="date" class="form-control" name="cargo[0][valid_upto]"></td>
+                                          <td>
+                                              <button class="btn btn-danger btn-sm" onclick="removeRow(this)">🗑</button>
+                                          </td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+
+
+                      <!-- Add Row Button -->
+
+                      <div class="text-end mt-2">
+                          <button type="button" class="btn btn-sm" style="background: #ca2639; color: white;"
+                  onclick="addRow()">
+                  <span style="filter: invert(1);">➕</span> Add Row
+              </button>
+
+        </div>
+    </div>
+</div>
             
-            <!-- Cargo Description Section -->
-            <div class="row mt-4">
-              <div class="col-12">
-                <h5 class="mb-3 pb-3">📦 Cargo Description</h5>
-                <!-- Here we use a table for cargo details -->
-                <div class="table-responsive">
-                  <table class="table table-bordered align-middle text-center">
-                    <thead>
-                      <tr>
-                        <th>No. of Packages</th>
-                        <th>Packaging Type</th>
-                        <th>Description</th>
-                        <th>Actual Weight (kg)</th>
-                        <th>Charged Weight (kg)</th>
-                        <th>Document No.</th>
-                        <th>Document Name</th>
-                        <th>Document Date</th>
-                        <th>Eway Bill</th>
-                        <th>Valid Upto</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <input type="number" name="lr[${counter}][packages_no]" class="form-control" placeholder="0">
-                        </td>
-                        <td>
-                          <select name="lr[${counter}][package_type]" class="form-select">
-                            <option value="">Select Type</option>
-                            <option value="Pallets">Pallets</option>
-                            <option value="Cartons">Cartons</option>
-                            <option value="Bags">Bags</option>
-                          </select>
-                        </td>
-                        <td>
-                          <input type="text" name="lr[${counter}][package_description]" class="form-control" placeholder="Enter description">
-                        </td>
-                        <td>
-                          <input type="number" name="lr[${counter}][actual_weight]" class="form-control" placeholder="0">
-                        </td>
-                        <td>
-                          <input type="number" name="lr[${counter}][charged_weight]" class="form-control" placeholder="0">
-                        </td>
-                        <td>
-                          <input type="text" name="lr[${counter}][document_no]" class="form-control" placeholder="Doc No.">
-                        </td>
-                        <td>
-                          <input type="text" name="lr[${counter}][document_name]" class="form-control" placeholder="Doc Name">
-                        </td>
-                        <td>
-                          <input type="date" name="lr[${counter}][document_date]" class="form-control">
-                        </td>
-                        <td>
-                          <input type="text" name="lr[${counter}][eway_bill]" class="form-control" placeholder="Eway Bill No.">
-                        </td>
-                        <td>
-                          <input type="date" name="lr[${counter}][valid_upto]" class="form-control">
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <!-- Button to add additional cargo rows can be added here if needed -->
-              </div>
-            </div>
+            
+
+
+            
             
             <!-- Freight Details Section -->
             <div class="row mt-4">
@@ -404,6 +417,35 @@ document.addEventListener("DOMContentLoaded", function () {
   addLRBtn.addEventListener("click", addNewLR);
 });
 </script>
+
+<script>
+    function addRow() {
+        let table = document.getElementById('cargoTableBody');
+        let rowCount = table.rows.length;
+
+        // Clone the first row
+        let newRow = table.rows[0].cloneNode(true);
+
+        // Update name attributes with new index
+        [...newRow.querySelectorAll('input, select')].forEach(function (input) {
+            if (input.name) {
+                input.name = input.name.replace(/\[\d+\]/, '[' + rowCount + ']');
+                input.value = ''; // Clear value
+            }
+        });
+
+        table.appendChild(newRow);
+    }
+
+    function removeRow(button) {
+        let table = document.getElementById('cargoTableBody');
+        let row = button.closest('tr');
+        if (table.rows.length > 1) {
+            row.remove();
+        }
+    }
+</script>
+
 
 
 @endsection

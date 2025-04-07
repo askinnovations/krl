@@ -20,6 +20,7 @@ class Order extends Model
         'description',
         'order_date',
         'status',
+        'cargo_description_type',
 
         // Consignor (Sender) Details
         'consignor_name',
@@ -40,16 +41,19 @@ class Order extends Model
         'to_location', //destination
         
        // Document Details
-        'packages_no',
-        'package_type',
-        'package_description',
-        'actual_weight',
-        'charged_weight',
+       // Cargo (JSON fields)
+       'packages_no',
+       'package_type',
+       'package_description',
+       'actual_weight',
+       'charged_weight',
 
-        'document_no',
-        'document_name',
-        'document_date',
-        'valid_upto',
+       // Document (JSON fields)
+       'document_no',
+       'document_name',
+       'document_date',
+       'eway_bill',
+       'valid_upto',
 
         // Freight Details
         'freight_amount',
@@ -62,6 +66,24 @@ class Order extends Model
         'balance_freight',
         'declared_value'
     ];
+
+
+    protected $casts = [
+        'packages_no'         => 'array',
+        'package_type'        => 'array',
+        'package_description' => 'array',
+        'actual_weight'       => 'array',
+        'charged_weight'      => 'array',
+
+        'document_no'         => 'array',
+        'document_name'       => 'array',
+        'document_date'       => 'array',
+        'eway_bill'           => 'array',
+        'valid_upto'          => 'array',
+
+       
+    ];
+    
 
     // app/Models/Order.php
 public function vehicle()

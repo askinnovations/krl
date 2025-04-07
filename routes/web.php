@@ -103,3 +103,4 @@ Route::prefix('admin')->group(function () {
     Route::get('/payroll/index', [PayrollController::class, 'index'])->name('admin.payroll.index');
     // Route::get('/maintenance/index', [MaintenanceController::class, 'index'])->name('admin.maintenance.index');
 });
+
