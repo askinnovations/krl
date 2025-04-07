@@ -29,75 +29,142 @@ class ConsignmentNoteController extends Controller
         return view('admin.consignments.edit');
     }
     
-    public function store(Request $request)
-   {
-    // ✅ Step 1: Validation
-    $validated = $request->validate([
-        'consignor_name' => 'required|string|max:255',
-        'consignor_loading' => 'nullable|string|max:255',
-        'consignor_gst' => 'nullable|string|max:20',
+    
+  public function store(Request $request)
+  {   
 
-        'consignee_name' => 'required|string|max:255',
-        'consignee_unloading' => 'nullable|string|max:255',
-        'consignee_gst' => 'nullable|string|max:20',
-
-        'vehicle_date'         => 'required|date',
-        'vehicle_type'         => 'required|string|max:100',
-        'vehicle_ownership'    => 'required|in:Own,Other',
-
-        'delivery_mode'        => 'required|string|in:Road,Rail,Air',
-        'from_location'        => 'required|string|max:100',
-        'to_location'          => 'required|string|max:100',
-
-        // Cargo Description
-        'packages_no'          => 'nullable|numeric',
-        'package_type'         => 'nullable|string|max:100',
-        'package_description'  => 'nullable|string|max:255',
-        'actual_weight'        => 'nullable|numeric',
-        'charged_weight'       => 'nullable|numeric',
-        'document_no'          => 'nullable|string|max:100',
-        'document_name'        => 'nullable|string|max:100',
-        'document_date'        => 'nullable|date',
-        'eway_bill'            => 'nullable|string|max:100',
-        'valid_upto'           => 'nullable|date',
-
-        // Freight Details
-        'freight_amount'       => 'nullable|numeric',
-        'lr_charges'           => 'nullable|numeric',
-        'hamali'               => 'nullable|numeric',
-        'other_charges'        => 'nullable|numeric',
-        'gst_amount'           => 'nullable|numeric',
-        'total_freight'        => 'nullable|numeric',
-        'less_advance'         => 'nullable|numeric',
-        'balance_freight'      => 'nullable|numeric',
-
-        // Declared Value
-        'declared_value'       => 'nullable|numeric',
-
+    // dd($request->all());
+    $request->validate([
+        'description' => 'required|string',
+        'order_date'  => 'required|date',
+        'status'      => 'required|in:Pending,Processing,Completed,Cancelled',
     ]);
 
-    // ✅ Step 2: Generate Unique Order ID
-    $order_id = strtoupper(uniqid('LR_'));
+    $lrDetails = $request->input('lr', []);        // LR Info
+    $cargoList = $request->input('cargo', []);     // Cargo Rows
+    $cargoType = $request->input('cargo_description_type', 'single');
 
-    // ✅ Step 3: Get vehicle_id using vehicle_type
-    $vehicle = Vehicle::where('vehicle_type', $request->input('vehicle_type'))->first();
+    if ($cargoType === 'single') {
+        foreach ($lrDetails as $lr) {
+            $generatedOrderId = 'ORD' . strtoupper(Str::random(6));
 
-    // ✅ Step 4: Prepare data
-    $data = array_merge($validated, [
-        'order_id' => $order_id,
-        'vehicle_id' => $vehicle ? $vehicle->id : null,
-    ]);
-    // ✅ Step 4: Insert into DB
-    try {
-        $order = Order::create($data);
+            $data = [
+                'order_id'    => $generatedOrderId,
+                'description' => $request->input('description'),
+                'order_date'  => $request->input('order_date'),
+                'status'      => $request->input('status'),
+                'cargo_description_type' => $cargoType,
 
-        return redirect()->route('admin.consignments.index')
-            ->with('success', 'Consignment created successfully with Order ID: ' . $order_id);
-    } catch (\Exception $e) {
-        return back()->withErrors(['msg' => 'Error creating order: ' . $e->getMessage()]);
+                // Consignor
+                'consignor_name'    => $lr['consignor_name'] ?? null,
+                'consignor_loading' => $lr['consignor_loading'] ?? null,
+                'consignor_gst'     => $lr['consignor_gst'] ?? null,
+
+                // Consignee
+                'consignee_name'      => $lr['consignee_name'] ?? null,
+                'consignee_unloading' => $lr['consignee_unloading'] ?? null,
+                'consignee_gst'       => $lr['consignee_gst'] ?? null,
+                'lr_number'           => $lr['lr_number'] ?? null,
+                'lr_date'             => $lr['lr_date'] ?? null,
+
+                // Vehicle & Freight
+                'vehicle_date'      => $lr['vehicle_date'] ?? null,
+                'vehicle_id'        => $lr['vehicle_id'] ?? null,
+                'vehicle_ownership' => $lr['vehicle_ownership'] ?? null,
+                'delivery_mode'     => $lr['delivery_mode'] ?? null,
+                'from_location'     => $lr['from_location'] ?? null,
+                'to_location'       => $lr['to_location'] ?? null,
+
+                'freight_amount'   => $lr['freight_amount'] ?? null,
+                'lr_charges'       => $lr['lr_charges'] ?? null,
+                'hamali'           => $lr['hamali'] ?? null,
+                'other_charges'    => $lr['other_charges'] ?? null,
+                'gst_amount'       => $lr['gst_amount'] ?? null,
+                'total_freight'    => $lr['total_freight'] ?? null,
+                'less_advance'     => $lr['less_advance'] ?? null,
+                'balance_freight'  => $lr['balance_freight'] ?? null,
+                'declared_value'   => $lr['declared_value'] ?? null,
+
+                // Cargo arrays
+                'packages_no'         => array_column($cargoList, 'packages_no'),
+                'package_type'        => array_column($cargoList, 'package_type'),
+                'package_description' => array_column($cargoList, 'package_description'),
+                'weight'              => array_column($cargoList, 'weight'),
+                'actual_weight'       => array_column($cargoList, 'actual_weight'),
+                'charged_weight'      => array_column($cargoList, 'charged_weight'),
+                'document_no'         => array_column($cargoList, 'document_no'),
+                'document_name'       => array_column($cargoList, 'document_name'),
+                'document_date'       => array_column($cargoList, 'document_date'),
+                'eway_bill'           => array_column($cargoList, 'eway_bill'),
+                'valid_upto'          => array_column($cargoList, 'valid_upto'),
+            ];
+
+            Order::create($data);
+        }
+    } else {
+        // Multiple documents: 1 LR with multiple orders for each cargo row
+        foreach ($lrDetails as $lr) {
+            foreach ($cargoList as $cargo) {
+                $generatedOrderId = 'ORD' . strtoupper(Str::random(6));
+
+                $data = [
+                    'order_id'    => $generatedOrderId,
+                    'description' => $request->input('description'),
+                    'order_date'  => $request->input('order_date'),
+                    'status'      => $request->input('status'),
+                    'cargo_description_type' => $cargoType,
+
+                    // Consignor
+                    'consignor_name'    => $lr['consignor_name'] ?? null,
+                    'consignor_loading' => $lr['consignor_loading'] ?? null,
+                    'consignor_gst'     => $lr['consignor_gst'] ?? null,
+                    'lr_number'         => $lr['lr_number'] ?? null,
+                    'lr_date'           => $lr['lr_date'] ?? null,
+
+                    // Consignee
+                    'consignee_name'      => $lr['consignee_name'] ?? null,
+                    'consignee_unloading' => $lr['consignee_unloading'] ?? null,
+                    'consignee_gst'       => $lr['consignee_gst'] ?? null,
+
+                    // Vehicle & Freight
+                    'vehicle_date'      => $lr['vehicle_date'] ?? null,
+                    'vehicle_id'        => $lr['vehicle_id'] ?? null,
+                    'vehicle_ownership' => $lr['vehicle_ownership'] ?? null,
+                    'delivery_mode'     => $lr['delivery_mode'] ?? null,
+                    'from_location'     => $lr['from_location'] ?? null,
+                    'to_location'       => $lr['to_location'] ?? null,
+
+                    'freight_amount'   => $lr['freight_amount'] ?? null,
+                    'lr_charges'       => $lr['lr_charges'] ?? null,
+                    'hamali'           => $lr['hamali'] ?? null,
+                    'other_charges'    => $lr['other_charges'] ?? null,
+                    'gst_amount'       => $lr['gst_amount'] ?? null,
+                    'total_freight'    => $lr['total_freight'] ?? null,
+                    'less_advance'     => $lr['less_advance'] ?? null,
+                    'balance_freight'  => $lr['balance_freight'] ?? null,
+                    'declared_value'   => $lr['declared_value'] ?? null,
+
+                    // Single cargo row as array
+                    'packages_no'         => [$cargo['packages_no']],
+                    'package_type'        => [$cargo['package_type']],
+                    'package_description' => [$cargo['package_description']],
+                    'weight'              => [$cargo['weight']],
+                    'actual_weight'       => [$cargo['actual_weight']],
+                    'charged_weight'      => [$cargo['charged_weight']],
+                    'document_no'         => [$cargo['document_no']],
+                    'document_name'       => [$cargo['document_name']],
+                    'document_date'       => [$cargo['document_date']],
+                    'eway_bill'           => [$cargo['eway_bill']],
+                    'valid_upto'          => [$cargo['valid_upto']],
+                ];
+
+                Order::create($data);
+            }
+        }
     }
-  }
 
+    return redirect()->route('admin.consignments.index')->with('success', 'consignments(s) saved successfully.');
+}
 
 }
 

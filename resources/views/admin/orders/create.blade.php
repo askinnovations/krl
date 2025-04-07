@@ -95,7 +95,7 @@
         let options = '<option value="">Select Vehicle</option>';
         vehicles.forEach(function(vehicle) {
             // यहाँ आप अपनी आवश्यकता के अनुसार vehicle का display नाम बना सकते हैं
-            options += `<option value="${vehicle.id}">${vehicle.vehicle_type}</option>`;
+            options += `<option value="${vehicle.id}">${vehicle.vehicle_type} - ${vehicle.vehicle_no}</option>`;
         });
         return options;
     }
@@ -127,6 +127,10 @@ document.addEventListener("DOMContentLoaded", function () {
               <div class="col-md-6">
                 <h5>📦 Consignor (Sender)</h5>
                 <div class="mb-3">
+                  <label class="form-label">Lr Number</label>
+                  <input type="number" name="lr[${counter}][lr_number]" class="form-control" placeholder="Enter lr number name">
+                </div>
+                <div class="mb-3">
                   <label class="form-label">Consignor Name</label>
                   <input type="text" name="lr[${counter}][consignor_name]" class="form-control" placeholder="Enter sender's name">
                 </div>
@@ -143,6 +147,10 @@ document.addEventListener("DOMContentLoaded", function () {
               <!-- Consignee Details -->
               <div class="col-md-6">
                 <h5>📦 Consignee (Receiver)</h5>
+                <div class="mb-3">
+                  <label class="form-label">Lr date</label>
+                  <input type="date" name="lr[${counter}][lr_date]" class="form-control" placeholder="Enter lr date">
+                </div>
                 <div class="mb-3">
                   <label class="form-label">Consignee Name</label>
                   <input type="text" name="lr[${counter}][consignee_name]" class="form-control" placeholder="Enter receiver's name">
@@ -259,6 +267,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                           <th>No. of Packages</th>
                                           <th>Packaging Type</th>
                                           <th>Description</th>
+                                          <th>Weight (kg)</th>
                                           <th>Actual Weight (kg)</th>
                                           <th>Charged Weight (kg)</th>
                                           <th>Document No.</th>
@@ -280,6 +289,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                               </select>
                                           </td>
                                           <td><input type="text" class="form-control" name="cargo[0][package_description]" placeholder="Enter description"></td>
+                                          <td><input type="number" class="form-control" name="cargo[0][weight]" placeholder="0"></td>
                                           <td><input type="number" class="form-control" name="cargo[0][actual_weight]" placeholder="0"></td>
                                           <td><input type="number" class="form-control" name="cargo[0][charged_weight]" placeholder="0"></td>
                                           <td><input type="text" class="form-control" name="cargo[0][document_no]" placeholder="Doc No."></td>
@@ -301,10 +311,8 @@ document.addEventListener("DOMContentLoaded", function () {
                       <div class="text-end mt-2">
                           <button type="button" class="btn btn-sm" style="background: #ca2639; color: white;"
                   onclick="addRow()">
-                  <span style="filter: invert(1);">➕</span> Add Row
-              </button>
-
-        </div>
+                  <span style="filter: invert(1);">➕</span> Add Row</button>
+              </div>
     </div>
 </div>
             

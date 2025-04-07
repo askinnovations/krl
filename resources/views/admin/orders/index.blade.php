@@ -61,14 +61,17 @@
                                 @endif
                             </td>
                             <td>
-                            <a href="#" class="btn btn-sm btn-light view-btn">
-                                <i class="fas fa-eye text-primary"></i>
+                           
+                            <a href="{{ route('admin.orders.view', $order->order_id) }}" class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i>
                             </a>
+
                             
-                            <a href="{{ route('admin.orders.edit', ['id' => $order->id]) }}" class="btn btn-sm btn-light edit-btn">
-                                    <i class="fas fa-pen text-warning"></i>
-                             </a>
-                              <button class="btn btn-sm btn-light delete-btn"><i class="fas fa-trash text-danger"></i></button>
+                            <a href="{{ route('admin.orders.edit', $order->order_id) }}" class="btn btn-sm btn-light edit-btn">
+                                 <i class="fas fa-pen text-warning"></i>
+                              </a>
+
+
+                              <a href="{{ route('admin.orders.delete', $order->order_id) }}" class="btn btn-sm btn-light delete-btn"><i class="fas fa-trash text-danger"></i></a>
                             </td>
                         </tr>
                         @endforeach
@@ -85,5 +88,40 @@
    <!-- End Page-content -->
 </div>
 <!-- end main content-->
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                if (!confirm('Are you sure you want to delete all LR entries under this order ID?')) return;
+
+                const url = this.getAttribute('href');
+
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.status === 'success') {
+                        location.reload(); // or redirect
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Something went wrong.');
+                });
+            });
+        });
+    });
+</script>
+
 
 @endsection

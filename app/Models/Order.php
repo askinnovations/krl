@@ -33,6 +33,8 @@ class Order extends Model
         'consignee_gst',
 
         // LR (Consignment) Specific Fields
+        'lr_number',
+        'lr_date',
         'vehicle_date',
         'vehicle_id',
         'vehicle_ownership',
@@ -42,9 +44,11 @@ class Order extends Model
         
        // Document Details
        // Cargo (JSON fields)
+      
        'packages_no',
        'package_type',
        'package_description',
+        'weight',
        'actual_weight',
        'charged_weight',
 
@@ -72,6 +76,7 @@ class Order extends Model
         'packages_no'         => 'array',
         'package_type'        => 'array',
         'package_description' => 'array',
+        'weight'              => 'array',
         'actual_weight'       => 'array',
         'charged_weight'      => 'array',
 
