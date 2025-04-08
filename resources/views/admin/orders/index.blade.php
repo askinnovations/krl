@@ -38,8 +38,8 @@
                         <tr>
                            <th>S.No</th>
                            <th>Order ID</th>
-                           <th>Description</th>
-                           <th>Date</th>
+                           <th>Consignment Details</th>
+                           <th>Consignment Pickup Date</th>
                            <th>Status</th>
                            <th>Action</th>
                         </tr>
@@ -62,7 +62,7 @@
                             </td>
                             <td>
                            
-                            <a href="{{ route('admin.orders.view', $order->order_id) }}" class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i>
+                            <a href="#" class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i>
                             </a>
 
                             

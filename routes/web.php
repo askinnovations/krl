@@ -64,7 +64,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/store', [ConsignmentNoteController::class, 'store'])->name('admin.consignments.store');
         Route::get('/edit/{id}', [ConsignmentNoteController::class, 'edit'])->name('admin.consignments.edit');
         Route::get('/view/{id}', [ConsignmentNoteController::class, 'show'])->name('admin.consignments.view');
-        Route::post('/update/{id}', [ConsignmentNoteController::class, 'update'])->name('admin.consignments.update');
+        Route::post('/update/{order_id}', [ConsignmentNoteController::class, 'update'])->name('admin.consignments.update');
         Route::delete('/delete/{id}', [ConsignmentNoteController::class, 'destroy'])->name('admin.consignments.delete');
     });
 

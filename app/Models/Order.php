@@ -21,6 +21,8 @@ class Order extends Model
         'order_date',
         'status',
         'cargo_description_type',
+        'consignor_id',
+        'consignee_id',
 
         // Consignor (Sender) Details
         'consignor_name',
@@ -52,6 +54,12 @@ class Order extends Model
        'actual_weight',
        'charged_weight',
 
+        // customer
+        'customer_id',
+        'gst_number',
+        'customer_address',
+        'order_type',
+
        // Document (JSON fields)
        'document_no',
        'document_name',
@@ -70,6 +78,17 @@ class Order extends Model
         'balance_freight',
         'declared_value'
     ];
+    // Relationships
+    
+    public function consignor()
+   {
+    return $this->belongsTo(User::class, 'consignor_id');
+   }
+
+    public function consignee()
+    {
+        return $this->belongsTo(User::class, 'consignee_id');
+    }
 
 
     protected $casts = [

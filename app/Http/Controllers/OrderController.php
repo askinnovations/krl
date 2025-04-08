@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 use App\Models\Order;
 use App\Models\Vehicle;
+use App\Models\User;
+
 
 class OrderController extends Controller
 {
@@ -22,7 +24,8 @@ class OrderController extends Controller
    {
     // Vehicles table से सभी records fetch करें
     $vehicles = Vehicle::all();
-    return view('admin.orders.create', compact('vehicles'));
+    $users = User::all(); // Or apply role/customer filter if needed
+    return view('admin.orders.create', compact('vehicles','users'));
     }
       
    
@@ -34,10 +37,15 @@ public function store(Request $request)
 {   
 
     // dd($request->all());
+
     $request->validate([
         'description' => 'required|string',
         'order_date'  => 'required|date',
+        'customer_id'    => 'required|exists:users,id',
+        'consignor_id' => 'required|exists:users,id',
+        'consignee_id' => 'required|exists:users,id',
         'status'      => 'required|in:Pending,Processing,Completed,Cancelled',
+        'order_type'  => 'required|in:Back Date,Future,Normal,',
     ]);
 
     $lrDetails = $request->input('lr', []);        // LR Info
@@ -55,19 +63,30 @@ public function store(Request $request)
                 'status'      => $request->input('status'),
                 'cargo_description_type' => $cargoType,
 
-                // Consignor
-                'consignor_name'    => $lr['consignor_name'] ?? null,
-                'consignor_loading' => $lr['consignor_loading'] ?? null,
-                'consignor_gst'     => $lr['consignor_gst'] ?? null,
+                // New: Customer Info
+                'customer_id'       => $request->input('customer_id'),
+                'customer_gst'      => $request->input('gst_number'),
+                'customer_address'  => $request->input('customer_address'),
+                'order_type'        => $request->input('order_type'),
 
-                // Consignee
-                'consignee_name'      => $lr['consignee_name'] ?? null,
-                'consignee_unloading' => $lr['consignee_unloading'] ?? null,
-                'consignee_gst'       => $lr['consignee_gst'] ?? null,
-                'lr_number'           => $lr['lr_number'] ?? null,
-                'lr_date'             => $lr['lr_date'] ?? null,
+                // Consignor Info
+
+                'consignor_id'       => $request->input('consignor_id'),
+                'customer_gst'      => $request->input('consignor_gst'),
+                'customer_address'  => $request->input('consignor_loading'),
+               
+
+                // Consignee Info
+                'consignee_id'         => $request->input('consignee_id'),
+                
+                'consignee_gst'        => $request->input('consignee_gst'),
+                'consignee_unloading'  => $request->input('consignee_unloading'),
+
 
                 // Vehicle & Freight
+                
+                'lr_number'         => $lr['lr_number'] ?? null,
+                'lr_date'           => $lr['lr_date'] ?? null,
                 'vehicle_date'      => $lr['vehicle_date'] ?? null,
                 'vehicle_id'        => $lr['vehicle_id'] ?? null,
                 'vehicle_ownership' => $lr['vehicle_ownership'] ?? null,
@@ -114,19 +133,28 @@ public function store(Request $request)
                     'status'      => $request->input('status'),
                     'cargo_description_type' => $cargoType,
 
-                    // Consignor
-                    'consignor_name'    => $lr['consignor_name'] ?? null,
-                    'consignor_loading' => $lr['consignor_loading'] ?? null,
-                    'consignor_gst'     => $lr['consignor_gst'] ?? null,
-                    'lr_number'         => $lr['lr_number'] ?? null,
-                    'lr_date'           => $lr['lr_date'] ?? null,
+                   // New: Customer Info
+                   'customer_id'       => $request->input('customer_id'),
+                   'customer_gst'      => $request->input('gst_number'),
+                   'customer_address'  => $request->input('customer_address'),
+                   'order_type'        => $request->input('order_type'),
 
-                    // Consignee
-                    'consignee_name'      => $lr['consignee_name'] ?? null,
-                    'consignee_unloading' => $lr['consignee_unloading'] ?? null,
-                    'consignee_gst'       => $lr['consignee_gst'] ?? null,
+                   // Consignor Info
+
+                    'consignor_id'       => $request->input('consignor_id'),
+                    'customer_gst'      => $request->input('consignor_gst'),
+                    'customer_address'  => $request->input('consignor_loading'),
+               
+
+                    // Consignee Info
+                    'consignee_id'         => $request->input('consignee_id'),
+                    
+                    'consignee_gst'        => $request->input('consignee_gst'),
+                    'consignee_unloading'  => $request->input('consignee_unloading'),
 
                     // Vehicle & Freight
+                    'lr_number'         => $lr['lr_number'] ?? null,
+                    'lr_date'           => $lr['lr_date'] ?? null,
                     'vehicle_date'      => $lr['vehicle_date'] ?? null,
                     'vehicle_id'        => $lr['vehicle_id'] ?? null,
                     'vehicle_ownership' => $lr['vehicle_ownership'] ?? null,
@@ -167,6 +195,7 @@ public function store(Request $request)
 }
 
 
+
 // update
 
 public function update(Request $request, $orderId)
@@ -200,15 +229,14 @@ public function show($order_id)
 // edit
 public function edit($order_id)
 {
-    // Main Order (primary LR)
+    
     $order = Order::findOrFail($order_id);
-
-    // All associated LRs with same order_id (excluding the main one if needed)
     $lrEntries = Order::where('order_id', $order->order_id)
-                      ->where('order_date', '!=', $order->order_date) // Optional: Exclude main by any field
+                      ->where('order_date', '!=', $order->order_date) 
                       ->get();
+    $users = User::all(); 
 
-    return view('admin.orders.edit', compact('order', 'lrEntries'));
+    return view('admin.orders.edit', compact('order', 'lrEntries','users'));
 }
 
 

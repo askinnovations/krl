@@ -22,149 +22,220 @@ class ConsignmentNoteController extends Controller
     return view('admin.consignments.create', compact('vehicles'));
     }
     
-    public function edit($id)
-    {
-        
-        
-        return view('admin.consignments.edit');
-    }
     
     
-  public function store(Request $request)
-  {   
+    public function store(Request $request)
+   {
+    // Step 1: Validate main order fields
+    $validated = $request->validate([
+        'consignor_name' => 'required|string|max:255',
+        'consignor_loading' => 'nullable|string|max:255',
+        'consignor_gst' => 'nullable|string|max:20',
+        'lr_number'     => 'nullable|string|max:100',
+        'lr_date'       => 'nullable|date',
 
-    // dd($request->all());
-    $request->validate([
-        'description' => 'required|string',
-        'order_date'  => 'required|date',
-        'status'      => 'required|in:Pending,Processing,Completed,Cancelled',
+        'consignee_name' => 'required|string|max:255',
+        'consignee_unloading' => 'nullable|string|max:255',
+        'consignee_gst' => 'nullable|string|max:20',
+
+        'vehicle_date' => 'required|date',
+        'vehicle_type' => 'required|string|max:100',
+        'vehicle_ownership' => 'required|in:Own,Other',
+
+        'delivery_mode' => 'required|string|in:Road,Rail,Air',
+        'from_location' => 'required|string|max:100',
+        'to_location' => 'required|string|max:100',
+
+        // Freight
+        'freight_amount' => 'nullable|numeric',
+        'lr_charges' => 'nullable|numeric',
+        'hamali' => 'nullable|numeric',
+        'other_charges' => 'nullable|numeric',
+        'gst_amount' => 'nullable|numeric',
+        'total_freight' => 'nullable|numeric',
+        'less_advance' => 'nullable|numeric',
+        'balance_freight' => 'nullable|numeric',
+
+        // Declared
+        'declared_value' => 'nullable|numeric',
     ]);
 
-    $lrDetails = $request->input('lr', []);        // LR Info
-    $cargoList = $request->input('cargo', []);     // Cargo Rows
-    $cargoType = $request->input('cargo_description_type', 'single');
+    // ✅ Step 2: Generate unique order ID
+    $order_id = strtoupper(uniqid('ORD_'));
 
-    if ($cargoType === 'single') {
-        foreach ($lrDetails as $lr) {
-            $generatedOrderId = 'ORD' . strtoupper(Str::random(6));
+    // ✅ Step 3: Get vehicle ID from vehicle type
+    $vehicle = Vehicle::where('vehicle_type', $request->input('vehicle_type'))->first();
 
-            $data = [
-                'order_id'    => $generatedOrderId,
-                'description' => $request->input('description'),
-                'order_date'  => $request->input('order_date'),
-                'status'      => $request->input('status'),
-                'cargo_description_type' => $cargoType,
+    // ✅ Step 4: Prepare cargo arrays
+    $cargoList = $request->input('cargo', []);
 
-                // Consignor
-                'consignor_name'    => $lr['consignor_name'] ?? null,
-                'consignor_loading' => $lr['consignor_loading'] ?? null,
-                'consignor_gst'     => $lr['consignor_gst'] ?? null,
+    $cargo_fields = [
+        'packages_no', 'package_type', 'package_description',
+        'weight', 'actual_weight', 'charged_weight',
+        'document_no', 'document_name', 'document_date',
+        'eway_bill', 'valid_upto'
+    ];
 
-                // Consignee
-                'consignee_name'      => $lr['consignee_name'] ?? null,
-                'consignee_unloading' => $lr['consignee_unloading'] ?? null,
-                'consignee_gst'       => $lr['consignee_gst'] ?? null,
-                'lr_number'           => $lr['lr_number'] ?? null,
-                'lr_date'             => $lr['lr_date'] ?? null,
+    $cargoData = [];
 
-                // Vehicle & Freight
-                'vehicle_date'      => $lr['vehicle_date'] ?? null,
-                'vehicle_id'        => $lr['vehicle_id'] ?? null,
-                'vehicle_ownership' => $lr['vehicle_ownership'] ?? null,
-                'delivery_mode'     => $lr['delivery_mode'] ?? null,
-                'from_location'     => $lr['from_location'] ?? null,
-                'to_location'       => $lr['to_location'] ?? null,
+    // Initialize arrays
+    foreach ($cargo_fields as $field) {
+        $cargoData[$field] = [];
+    }
 
-                'freight_amount'   => $lr['freight_amount'] ?? null,
-                'lr_charges'       => $lr['lr_charges'] ?? null,
-                'hamali'           => $lr['hamali'] ?? null,
-                'other_charges'    => $lr['other_charges'] ?? null,
-                'gst_amount'       => $lr['gst_amount'] ?? null,
-                'total_freight'    => $lr['total_freight'] ?? null,
-                'less_advance'     => $lr['less_advance'] ?? null,
-                'balance_freight'  => $lr['balance_freight'] ?? null,
-                'declared_value'   => $lr['declared_value'] ?? null,
-
-                // Cargo arrays
-                'packages_no'         => array_column($cargoList, 'packages_no'),
-                'package_type'        => array_column($cargoList, 'package_type'),
-                'package_description' => array_column($cargoList, 'package_description'),
-                'weight'              => array_column($cargoList, 'weight'),
-                'actual_weight'       => array_column($cargoList, 'actual_weight'),
-                'charged_weight'      => array_column($cargoList, 'charged_weight'),
-                'document_no'         => array_column($cargoList, 'document_no'),
-                'document_name'       => array_column($cargoList, 'document_name'),
-                'document_date'       => array_column($cargoList, 'document_date'),
-                'eway_bill'           => array_column($cargoList, 'eway_bill'),
-                'valid_upto'          => array_column($cargoList, 'valid_upto'),
-            ];
-
-            Order::create($data);
-        }
-    } else {
-        // Multiple documents: 1 LR with multiple orders for each cargo row
-        foreach ($lrDetails as $lr) {
-            foreach ($cargoList as $cargo) {
-                $generatedOrderId = 'ORD' . strtoupper(Str::random(6));
-
-                $data = [
-                    'order_id'    => $generatedOrderId,
-                    'description' => $request->input('description'),
-                    'order_date'  => $request->input('order_date'),
-                    'status'      => $request->input('status'),
-                    'cargo_description_type' => $cargoType,
-
-                    // Consignor
-                    'consignor_name'    => $lr['consignor_name'] ?? null,
-                    'consignor_loading' => $lr['consignor_loading'] ?? null,
-                    'consignor_gst'     => $lr['consignor_gst'] ?? null,
-                    'lr_number'         => $lr['lr_number'] ?? null,
-                    'lr_date'           => $lr['lr_date'] ?? null,
-
-                    // Consignee
-                    'consignee_name'      => $lr['consignee_name'] ?? null,
-                    'consignee_unloading' => $lr['consignee_unloading'] ?? null,
-                    'consignee_gst'       => $lr['consignee_gst'] ?? null,
-
-                    // Vehicle & Freight
-                    'vehicle_date'      => $lr['vehicle_date'] ?? null,
-                    'vehicle_id'        => $lr['vehicle_id'] ?? null,
-                    'vehicle_ownership' => $lr['vehicle_ownership'] ?? null,
-                    'delivery_mode'     => $lr['delivery_mode'] ?? null,
-                    'from_location'     => $lr['from_location'] ?? null,
-                    'to_location'       => $lr['to_location'] ?? null,
-
-                    'freight_amount'   => $lr['freight_amount'] ?? null,
-                    'lr_charges'       => $lr['lr_charges'] ?? null,
-                    'hamali'           => $lr['hamali'] ?? null,
-                    'other_charges'    => $lr['other_charges'] ?? null,
-                    'gst_amount'       => $lr['gst_amount'] ?? null,
-                    'total_freight'    => $lr['total_freight'] ?? null,
-                    'less_advance'     => $lr['less_advance'] ?? null,
-                    'balance_freight'  => $lr['balance_freight'] ?? null,
-                    'declared_value'   => $lr['declared_value'] ?? null,
-
-                    // Single cargo row as array
-                    'packages_no'         => [$cargo['packages_no']],
-                    'package_type'        => [$cargo['package_type']],
-                    'package_description' => [$cargo['package_description']],
-                    'weight'              => [$cargo['weight']],
-                    'actual_weight'       => [$cargo['actual_weight']],
-                    'charged_weight'      => [$cargo['charged_weight']],
-                    'document_no'         => [$cargo['document_no']],
-                    'document_name'       => [$cargo['document_name']],
-                    'document_date'       => [$cargo['document_date']],
-                    'eway_bill'           => [$cargo['eway_bill']],
-                    'valid_upto'          => [$cargo['valid_upto']],
-                ];
-
-                Order::create($data);
-            }
+    foreach ($cargoList as $cargo) {
+        foreach ($cargo_fields as $field) {
+            $cargoData[$field][] = $cargo[$field] ?? null;
         }
     }
 
-    return redirect()->route('admin.consignments.index')->with('success', 'consignments(s) saved successfully.');
+    // ✅ Step 5: Prepare full data for saving
+    $data = array_merge($validated, [
+        'order_id'   => $order_id,
+        'vehicle_id' => $vehicle ? $vehicle->id : null,
+    ], $cargoData); // Add all cargo fields as arrays
+
+    // ✅ Step 6: Store into DB
+    try {
+        Order::create($data);
+        return redirect()->route('admin.consignments.index')
+            ->with('success', 'Consignment created successfully with Order ID: ' . $order_id);
+    } catch (\Exception $e) {
+        return back()->withErrors(['msg' => 'Error saving order: ' . $e->getMessage()]);
+    }
+  }
+
+
+//   update
+    public function update(Request $request, $orderId)
+    {
+        // dd($request->all());
+
+    // Step 1: Validate main order fields
+    $validated = $request->validate([
+        'consignor_name' => 'required|string|max:255',
+        'consignor_loading' => 'nullable|string|max:255',
+        'consignor_gst' => 'nullable|string|max:20',
+        'lr_number' => 'nullable|string|max:100',
+        'lr_date' => 'nullable|date',
+
+        'consignee_name' => 'required|string|max:255',
+        'consignee_unloading' => 'nullable|string|max:255',
+        'consignee_gst' => 'nullable|string|max:20',
+
+        'vehicle_date' => 'required|date',
+        'vehicle_type' => 'required|string|max:100',
+        'vehicle_ownership' => 'required|in:Own,Other',
+
+        'delivery_mode' => 'required|string|in:Road,Rail,Air',
+        'from_location' => 'required|string|max:100',
+        'to_location' => 'required|string|max:100',
+
+        // Freight
+        'freight_amount' => 'nullable|numeric',
+        'lr_charges' => 'nullable|numeric',
+        'hamali' => 'nullable|numeric',
+        'other_charges' => 'nullable|numeric',
+        'gst_amount' => 'nullable|numeric',
+        'total_freight' => 'nullable|numeric',
+        'less_advance' => 'nullable|numeric',
+        'balance_freight' => 'nullable|numeric',
+
+        // Declared
+        'declared_value' => 'nullable|numeric',
+    ]);
+    
+    // Lookup by order_id instead of id
+    $order = Order::where('order_id', $orderId)->firstOrFail();
+
+    // Step 2: Get vehicle ID from vehicle type
+    $vehicle = Vehicle::where('vehicle_type', $request->input('vehicle_type'))->first();
+
+    // Step 3: Handle cargo fields
+    $cargoList = $request->input('cargo', []);
+  
+
+    $cargo_fields = [
+        'packages_no', 'package_type', 'package_description',
+        'weight', 'actual_weight', 'charged_weight',
+        'document_no', 'document_name', 'document_date',
+        'eway_bill', 'valid_upto'
+    ];
+
+    $cargoData = [];
+
+    foreach ($cargo_fields as $field) {
+        $cargoData[$field] = [];
+    }
+
+    foreach ($cargoList as $cargo) {
+        foreach ($cargo_fields as $field) {
+            $cargoData[$field][] = $cargo[$field] ?? null;
+        }
+    }
+
+    // Step 4: Merge all data
+    $data = array_merge($validated, [
+        'vehicle_id' => $vehicle ? $vehicle->id : null,
+    ], $cargoData);
+
+    // Step 5: Update the order
+    try {
+        $order = Order::findOrFail($orderId);
+        $order->update($data);
+
+        return redirect()->route('admin.consignments.index')
+            ->with('success', 'Consignment updated successfully with Order ID: ' . $order->order_id);
+    } catch (\Exception $e) {
+        return back()->withErrors(['msg' => 'Error updating order: ' . $e->getMessage()]);
+    }
 }
 
+
+
+   public function show($order_id)
+  {
+    
+    $order = Order::where('order_id', $order_id)->firstOrFail();
+    $vehicles = Vehicle::all();
+    return view('admin.consignments.view', compact('order','vehicles'));
+  }
+
+// edit
+    public function edit($order_id)
+    {
+        // Main Order (primary LR)
+        $order = Order::findOrFail($order_id);
+        $vehicles = Vehicle::all();
+
+        // All associated LRs with same order_id (excluding the main one if needed)
+        $lrEntries = Order::where('order_id', $order->order_id)
+                        ->where('order_date', '!=', $order->order_date) // Optional: Exclude main by any field
+                        ->get();
+
+        return view('admin.consignments.edit', compact('order', 'lrEntries','vehicles'));
+    }
+
+
+public function destroy($order_id)
+{
+    // Get all orders with the same order_id
+    $orders = Order::where('order_id', $order_id)->get();
+
+    if ($orders->isEmpty()) {
+        return response()->json(['status' => 'error', 'message' => 'No entries found for this order_id.'], 404);
+    }
+
+    try {
+        // Delete all related LRs
+        foreach ($orders as $order) {
+            $order->delete();
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'All entries under this Order ID deleted successfully.']);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'message' => 'Error while deleting entries.'], 500);
+    }
+}
 }
 
