@@ -2,307 +2,442 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KRL New LR Format</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-   
-</head>
-
-<body>
-<style>
-        :root {
-            --primary: #ca2639;
-            --text: #2e2e2e;
-            --subtle-bg: #fafafa;
-            --border-color: #e1e1e1;
-            --light-gray: #f5f5f5;
-        }
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khandelwal Roadlines LR</title>
+    <style>
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background: var(--light-gray);
-            padding: 30px;
-            color: var(--text);
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f7f7f7;
+            color: #17356e;
         }
 
         .container {
             max-width: 1000px;
             margin: auto;
-            background: #fff;
-            padding: 30px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+            padding: 10px;
+            background-color: #fff;
+            position: relative;
         }
 
-        header {
-            text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--primary);
-            margin-bottom: 30px;
-        }
-
-        header h2 {
-            color: var(--primary);
-            font-size: 26px;
-            margin-bottom: 6px;
-        }
-
-        header p {
-            font-size: 14px;
-            color: #444;
-        }
-
-        .flex {
+        .header-section {
             display: flex;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 10px;
         }
 
-        .box {
+        .bill-section {
+            width: 74%;
+        }
+
+        .freight-section {
+            width: 25%;
+        }
+
+        .left-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .left-header img {
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .left-header-content {
             flex: 1;
-            min-width: 200px;
         }
 
-        .address-block {
-            background: var(--subtle-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            width: 48%;
+        .left-header-content p,
+        .left-header-content small {
+            margin: 0;
+            font-size: 14px;
         }
 
-        .address-block h4 {
-            color: var(--primary);
-            font-size: 15px;
+        .coly {
+            /* border: 2px solid #002366; */
+            padding: 5px;
+            font-size: 14px;
+            /* background-color: #eef2ff; */
+            width: 220px;
+            margin-left: 10px;
+        }
+
+        .coly strong {
+            display: block;
+            text-align: center;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #e90a0a;
+        }
+
+        .right-header {
+            width: 100%;
+            font-size: 14px;
+            border: 2px solid #002366;
+            padding: 5px;
+            margin-top: 10px;
+        }
+
+        .right-header p {
+            margin: 4px 0;
+        }
+
+        h1 {
+            color: red;
+            font-size: 20px;
+            margin: 5px 0;
+        }
+
+        .notice {
+            border: 2px solid #002366;
+            margin: 10px 0;
+            padding: 6px;
+            font-size: 14px;
+            /* background-color: #eef2ff; */
+        }
+
+        .notice label {
+            margin-right: 10px;
+        }
+
+        .consignor-consignee {
+            display: flex;
+            justify-content: space-between;
+            border: 2px solid #002366;
+            padding: 10px;
+            font-size: 14px;
             margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .consignor-consignee .box {
+            width: 49%;
+            border: 1px solid #002366;
+            padding: 10px;
+            box-sizing: border-box;
+            min-height: 150px;
+        }
+
+        .consignor-consignee .box p {
+            margin: 4px 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 25px;
             font-size: 14px;
+            margin-bottom: 10px;
         }
 
+        td,
         th {
-            background: #f3f3f3;
-            color: #333;
-            font-weight: 500;
-            padding: 10px;
-            border: 1px solid var(--border-color);
+            border: 2px solid #002366;
+            padding: 4px;
         }
 
-        td {
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            background: #fff;
-        }
-
-        .checkbox-line {
-            margin-top: 25px;
+        .freight-box {
+            width: 100%;
+            border: 2px solid #002366;
             font-size: 14px;
+            background: #f9f9f9;
+            margin-top: 12px;
         }
 
-        .checkbox-line label {
-            margin-right: 20px;
-        }
-
-        .checkbox-line input[type="checkbox"] {
-            margin-left: 6px;
-            transform: scale(1.1);
-            accent-color: var(--primary);
-        }
-
-        .gst-note {
-            font-size: 13px;
-            margin-top: 20px;
-            padding: 12px 16px;
-            background: #fff7f8;
-            border-left: 4px solid var(--primary);
-            border-radius: 4px;
-            color: #444;
-        }
-
-        h3 {
+        .freight-box h4 {
+            margin: 0;
+            padding: 5px;
+            text-align: center;
+            border-bottom: 2px solid #002366;
+            background-color: snow;
             font-size: 16px;
-            color: var(--primary);
-            margin: 30px 0 10px;
         }
 
-        ol {
-            font-size: 13px;
-            padding-left: 18px;
-            color: #555;
+        .freight-box .section {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px;
+            border-bottom: 2px solid #002366;
         }
 
-        ol li {
-            margin-bottom: 5px;
+        .e-way {
+            font-size: 14px;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #002366;
         }
 
-        .footer {
+        .signature {
             text-align: right;
+            font-size: 14px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .terms {
             margin-top: 40px;
-            font-size: 15px;
-            color: var(--primary);
-            font-weight: 500;
+            font-size: 16px;
+            padding: 35px 70px;
+            /* border: 2px solid #002366; */
+            width: 1000px;
+            margin: auto;
+            background: #fff;
+            margin-top: 13px;
+        }
+
+        .terms h3 {
+            text-align: center;
+
+            margin-bottom: 10px;
+            font-size: 24px;
+            padding-bottom: 18px;
+        }
+
+        .terms ol {
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+
+        .terms li {
+            padding-bottom: 10px;
         }
 
         .print-btn {
-            display: block;
-            margin: 40px auto 0;
-            padding: 12px 30px;
-            background-color: var(--primary);
-            color: #fff;
+
+            padding: 12px 28px;
+            background-color: #ca2639;
+            color: white;
+            font-size: 16px;
             border: none;
-            border-radius: 5px;
-            font-size: 15px;
+            border-radius: 8px;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+            z-index: 1000;
+            margin: auto;
+            margin-top: 2%;
+            margin-bottom: 1%;
+            text-align: center;
+            display: block;
         }
 
-        @media (max-width: 600px) {
-            .address-block {
-                width: 100%;
-            }
+        .print-btn:hover {
+            background-color: #a71f2e;
+        }
 
-            .box {
-                flex: 100%;
-            }
+        .tr1 {
+            border-bottom: 2px solid #002366;
+            width: 67%;
+            text-align: center;
+            margin: auto;
+            margin-top: 4%;
+            padding-bottom: 5px;
+        }
 
+        .tr2 {
+            font-weight: 600 !important;
+            font-size: 16px !important;
+            color: inherit !important;
+        }
+
+        .pan {
+            border: 2px solid #002366;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .consignor-consignee-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .consignor-consignee-table td {
+      border: 2px solid #002366;
+      padding: 0;
+      vertical-align: top;
+      width: 50%;
+    }
+
+    .section-wrapper {
+      padding: 10px;
+    }
+
+    .section-heading {
+      /* background-color: #e6f0ff; */
+      color: #002366;
+      font-weight: bold;
+      padding: 8px 10px;
+      border-bottom: 2px solid #002366;
+    }
+
+    .address-line {
+      padding: 4px 10px;
+    }
+    .date{
+        font-size: 16px;
+    border-bottom: 2px solid;
+    padding-bottom: 11px !important;
+    margin-bottom: 13px !important;
+    }
+        @media print {
             .print-btn {
-                width: 100%;
+                display: none;
             }
         }
     </style>
+</head>
 
+<body>
+@php
+    $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
+@endphp
     <div class="container">
-        <header>
-            <div style="text-align: center; margin-bottom: 10px;">
-            <img src="{{ asset('backend/images/logo.png') }}" alt="Company Logo" style="max-height: 60px;">
-                
-              
-              </div>
-         
-            <p> Head Office : Khandelwal RoadLines, Opp. Abhinav Talkies, Ujjain Road, Dewas - 455001 </p>
-            <p>Mobile –9098733332, 9770533332 <br>
-                Offices - Mumbai : 9326145500, Indore : 9303188889</p>
-            <p>Email: krl@khandelwalroadlines.com | Website: www.khandelwalroadlines.com</p>
-        </header>
+        <div class="header-section">
+            <div class="bill-section">
+                <div class="left-header">
 
-        <section class="flex">
-            <div class="box">
-                <strong>CONSIGNEE COPY</strong><br />
-                <strong>AT OWNER’S RISK</strong>
-            </div>
-            <div class="box">
-                <p><strong>GSTIN / Transporter Id:</strong> 23AABFM6400F1ZX</p>
-                <p><strong>PAN:</strong> AABFM6400F</p>
-            </div>
-        </section>
+                    <div class="left-header-content">
+                    <img src="{{ asset('backend/images/logo.jpg') }}" alt="logo" style="width: 100%;">
+                        
 
-        <section class="flex">
-            <div class="box"><strong>L.R. NO:</strong>{{ $order->lr_number }}</div>
-            <div class="box"><strong>L.R. Dated:</strong>{{ $order->lr_date }}</div>
-            @php
-                $vehicle = collect($vehicles)->firstWhere('id', $order->vehicle_id);
-            @endphp
+                        <p>Head Office:  Khandelwal RoadLines, Opp. Abhinav Talkies, Ujjain Road, Dewas - 455001  </p>
+                        <small>MOBILE – 9098733332, 9770533332</small><br>
+                        <small>Offices - Mumbai: 9326145500, Indore: 9303188889</small><br>
+                        <small>Email: krl@khandelwalroadlines.com</small><br>
+                        <small>Website: www.khandelwalroadlines.com</small>
+                    </div>
+                    <div class="coly">
 
-            <div class="box"><strong>Vehicle:</strong> {{ $vehicle->vehicle_no ?? 'N/A' }}</div>
-            <div class="box"><strong>Vehicle Type:</strong> {{ $vehicle->vehicle_type ?? 'N/A' }}</div>
+                        <strong class="tr1">CONSIGNEE COPY</strong>
+                        <strong class="tr2">AT OWNER’S RISK</strong>
+                        <div class="pan">
+                            <div class="gst"> GSTIN / Transporter Id
+                                for EWAY Bill 23AABFM6400F1ZX</div>
+                            <div class="pan2"><strong>PAN:</strong> AABFM6400F</div>
+                        </div>
 
-            <div class="box"><strong>Delivery Mode:</strong> {{ $order->delivery_mode ?? 'N/A' }}</div>
-        </section>
+                    </div>
+                </div>
 
-        <section class="flex">
-            <div class="box"><strong>FROM:</strong>{{ $order->from_location }}</div>
-            <div class="box"><strong>TO:</strong> {{ $order->to_location }}</div>
-            <div class="box">
-                <strong>GST to be paid by:</strong>
-                <input type="checkbox" /> Consignor
-                <input type="checkbox" /> Consignee
-            </div>
-        </section>
 
-        <p class="gst-note">
-            We are registered as GTA under sec 9 (3) of GST act 2017 & GST is liable to pay by recipient (consignor /
-            consignee) under RCM – notification No. 13/2017 CTR dated 28/06/2017
-        </p>
 
-        <section class="flex">
-            <div class="address-block">
-                <h4>CONSIGNOR’S NAME & ADDRESS</h4>
-                <p>{{ $order->consignor_name }}</p>
-                <p>{{ $order->consignor_loading }}</p>
-                <p>GSTIN - {{ $order->consignor_gst }}</p>
-            </div>
-            <div class="address-block">
-                <h4>CONSIGNEE’S NAME & ADDRESS</h4>
-                <p>{{ $order->consignee_name }}</p>
-                <p>{{ $order->consignee_unloading }}</p>
-                <p>GSTIN - {{ $order->consignee_gst }}</p>
-            </div>
-        </section>
+                <div class="notice" style="display: flex; gap: 12px;  font-size: 14px; align-items: stretch;">
+                    <div style="align-self: center;">
+                        <p style="margin: 0; font-weight: bold;">GST to be paid by</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox">
+                            Consignor</label>
+                        <span style="font-weight: bold; text-align: center;">OR</span>
+                        <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox">
+                            Consignee</label>
+                    </div>
 
-        <table>
-            <thead>
-                <tr>
+                    <span style="margin-left: auto; align-self: center; text-align: center !important;">
+                        We are registered as GTA under sec 9 (3) of GST act 2017 & GST is 
+                        liable to pay by recipient (consignor / consignee) under RCM 
+                        notification No. 13/2017 CTR dated 28/06/2017 
+                    </span>
+                </div>
+
+                <div>
+                    <table class="consignor-consignee-table">
+                    <tr>
+  <td>
+    <div class="section-heading">CONSIGNOR'S NAME & ADDRESS</div>
+
+    @foreach($lrDetails as $lr)
+      @php
+        $consignorUser = \App\Models\User::find($lr['consignor_id'] ?? null);
+        $consignorName = $consignorUser->name ?? '-';
+      @endphp
+      <div class="address-line">• {{ $consignorName }}</div>
+      <div class="address-line">{{ $lr['consignor_loading'] ?? '-' }}</div>
+      <div class="address-line">GSTIN - {{ $lr['consignor_gst'] ?? '-' }}</div>
+      <br>
+    @endforeach
+  </td>
+
+  <td>
+    <div class="section-heading">CONSIGNEE'S NAME & ADDRESS</div>
+
+    @foreach($lrDetails as $lr)
+      @php
+        $consigneeUser = \App\Models\User::find($lr['consignee_id'] ?? null);
+        $consigneeName = $consigneeUser->name ?? '-';
+      @endphp
+      <div class="address-line">• {{ $consigneeName }}</div>
+      <div class="address-line">{{ $lr['consignee_unloading'] ?? '-' }}</div>
+      <div class="address-line">GSTIN - {{ $lr['consignee_gst'] ?? '-' }}</div>
+      <br>
+    @endforeach
+  </td>
+</tr>
+
+                      </table>
                     
-                    <th>No. of Packages</th>
-                    <th>Method of Packing</th>
-                    <th>Description / Said to Contain</th>
-                    <th>Weight</th>
-                    <th>Actual Weight</th>
-                    <th>Charged Weight</th>
-                </tr>
-            </thead>
-            <tbody>
-                                    @php
-                            function toArray($value) {
-                                return is_array($value) ? $value : json_decode($value, true);
-                            }
+                </div>
 
-                            $packages_no = toArray($order->packages_no ?? []);
-                            $types = toArray($order->package_type ?? []);
-                            $descriptions = toArray($order->package_description ?? []);
-                            $weights = toArray($order->weight ?? []); // changed to lowercase
-                            $actualWeights = toArray($order->actual_weight ?? []);
-                            $chargedWeights = toArray($order->charged_weight ?? []);
+                <table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
+    <thead>
+        <tr>
+            <th rowspan="2">No. of Packages</th>
+            <th rowspan="2">Method of Packing</th>
+            <th rowspan="2">Description Said to contain</th>
+            <th colspan="2">Weight</th>
+        </tr>
+        <tr>
+            <th>Actual Weight</th>
+            <th>Charged Weight</th>
+        </tr>
+    </thead>
+    <tbody>
+    @php
+    function toArray($value) {
+        return is_array($value) ? $value : json_decode($value, true);
+    }
 
-                            $rows = max(
-                                count($packages_no),
-                                count($types),
-                                count($descriptions),
-                                count($weights),
-                                count($actualWeights),
-                                count($chargedWeights)
-                            );
-                        @endphp
+    $lrDetails = toArray($order->lr ?? []);
+@endphp
 
-                        @for($i = 0; $i < $rows; $i++)
-                            <tr>
-                                <td>{{ $packages_no[$i] ?? '' }}</td>
-                                <td>{{ $types[$i] ?? '' }}</td>
-                                <td>{{ $descriptions[$i] ?? '' }}</td>
-                                <td>{{ $weights[$i] ?? '' }}</td>
-                                <td>{{ $actualWeights[$i] ?? '' }}</td>
-                                <td>{{ $chargedWeights[$i] ?? '' }}</td>
-                            </tr>
-                        @endfor
+@foreach($lrDetails as $lr)
+    @php
+        $cargos = toArray($lr['cargo'] ?? []);
+    @endphp
 
-                </tbody>
-
-        </table>
+    @foreach($cargos as $cargo)
         @php
+            // Check if at least one field is filled
+            $isValid = !empty($cargo['packages_no']) || !empty($cargo['package_type']) || !empty($cargo['package_description']) || !empty($cargo['actual_weight']) || !empty($cargo['charged_weight']);
+        @endphp
+
+        @if($isValid)
+            <tr>
+                <td>{{ $cargo['packages_no'] ?? '' }}</td>
+                <td>{{ $cargo['package_type'] ?? '' }}</td>
+                <td>{{ $cargo['package_description'] ?? '' }}</td>
+                <td>{{ $cargo['actual_weight'] ?? '' }}</td>
+                <td>{{ $cargo['charged_weight'] ?? '' }}</td>
+            </tr>
+        @endif
+    @endforeach
+@endforeach
+
+</tbody>
+
+</table>
+
+
+@php
     if (!function_exists('toArray')) {
         function toArray($value) {
             return is_array($value) ? $value : json_decode($value, true);
@@ -311,85 +446,126 @@
 
     $ewayBills = toArray($order->eway_bill ?? []);
     $validUpto = toArray($order->valid_upto ?? []);
+    $declaredValue = $order->declared_value ?? '__________';
 @endphp
 
-@for ($i = 0; $i < max(count($ewayBills), count($validUpto)); $i++)
-    <p style="margin-top: 3%;">
-        <strong>E-WAY BILL NO:</strong> {{ $ewayBills[$i] ?? '__________' }} &nbsp;&nbsp;
-        <strong>VALID UPTO:</strong> {{ $validUpto[$i] ?? '__________' }}
+<div class="e-way" style="margin-top: 20px; font-size: 16px;">
+    @for ($i = 0; $i < max(count($ewayBills), count($validUpto)); $i++)
+        <p style="margin-bottom: 8px;">
+            <strong>E-WAY BILL NO:</strong> {{ $ewayBills[$i] ?? '__________' }} &nbsp;&nbsp;&nbsp;
+            <strong>VALID UPTO:</strong> {{ $validUpto[$i] ?? '__________' }}
+        </p>
+    @endfor
+
+    @php
+    $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
+@endphp
+
+@foreach($lrDetails as $index => $lr)
+    <p style="margin-top: 10px;">
+        <strong>Declared Value Rs.</strong> {{ $lr['declared_value'] ?? '-' }}
     </p>
-@endfor
+@endforeach
 
+</div>
 
+            </div>
 
+            <div class="freight-section">
+                <div class="right-header">
+                @php
+    $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
+@endphp
 
-        <div class="checkbox-line">
-            <strong>FREIGHT</strong>
-            <input type="checkbox" /> PAID
-            <input type="checkbox" /> TO PAY
-            <input type="checkbox" /> TO BE BILLED
-        </div>
+@foreach($lrDetails as $lr)
+    <p><strong>L.R. No:</strong> {{ $lr['lr_number'] ?? '-' }}</p>
+    <p class="date" style="font-size: 16px;">
+        <strong>Dated:</strong> {{ $lr['lr_date'] ?? '-' }}
+    </p>
 
-        <table class="small-table" style="width: 50%; margin-top: 15px;">
-            <tr>
-                <td>FREIGHT</td>
-                <td>{{ $order->freight_amount }}</td>
-            </tr>
-            <tr>
-                <td>LR CHARGES</td>
-                <td>{{ $order->lr_charges }}</td>
-            </tr>
-            <tr>
-                <td>HAMALI</td>
-                <td>{{ $order->hamali }}</td>
-            </tr>
-            <tr>
-                <td>OTHER CHARGES</td>
-                <td>{{ $order->other_charges }}</td>
-            </tr>
-            <tr>
-                <td>GST</td>
-                <td>{{ $order->gst_amount }}</td>
-            </tr>
-            <tr>
-                <td><strong>TOTAL FREIGHT</strong></td>
-                <td>{{ $order->total_freight }}</td>
-            </tr>
-            <tr>
-                <td>LESS ADVANCE</td>
-                <td>{{ $order->less_advance }}</td>
-            </tr>
-            <tr>
-                <td><strong>BALANCE FREIGHT</strong></td>
-                <td>{{ $order->balance_freight }}</td>
-            </tr>
-        </table>
+    @php
+        $vehicle = collect($vehicles)->firstWhere('id', $lr['vehicle_id'] ?? null);
+    @endphp
 
-        <p style="margin-top: 2%;"><strong>Declared Value Rs.</strong>{{ $order->declared_value }}</p>
+    <p><strong>Vehicle:</strong> {{ $vehicle->vehicle_no ?? 'N/A' }}</p>
+    <p><strong>Vehicle Type:</strong> {{ $vehicle->vehicle_type ?? 'N/A' }}</p>
+    <p><strong>Delivery Mode:</strong> {{ $lr['delivery_mode'] ?? 'N/A' }}</p>
+    <p><strong>From:</strong> {{ $lr['from_location'] ?? '-' }}</p>
+    <p><strong>To:</strong> {{ $lr['to_location'] ?? '-' }}</p>
+    <hr>
+@endforeach
 
-        <section class="terms">
-            <h3>TERMS & CONDITIONS</h3>
-            <ol>
-                <li>No responsibility for leakage, breakage, shortage, damage due to rain, sun, or weather. Sender must
-                    pack properly.</li>
-                <li>Fresh fruits are transported at the risk of consignor/consignee as they may spoil en route.</li>
-                <li>Goods may be sent in one lot or in parts depending on convenience.</li>
-                <li>Delivery to consignee/agent on payment of all charges.</li>
-                <li>Delivery at destination company godown only unless otherwise agreed in writing.</li>
-                <li>Goods must be collected within 7 days of arrival. Delay incurs demurrage Rs.100/- per ton/day or per
-                    package/day, at owner’s risk.</li>
-                <li>Claims must be made within 15 days, else considered void.</li>
-                <li>No responsibility for delays/loss due to accident, strikes, riots, or natural calamities.</li>
-                <li>Disputes subject to Dewas (MP) jurisdiction only.</li>
-            </ol>
-        </section>
+                </div>
+                <div class="freight-box">
+                <h4>FREIGHT</h4>
 
-        <div class="footer">
-            For Khandelwal RoadLines
-        </div>
+@php
+    $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
+@endphp
 
-        <button class="print-btn" onclick="window.print()">Print LR / Consignment</button>
+@foreach($lrDetails as $index => $lr)
+    <div class="section">
+        <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'PAID' ? 'checked' : '' }}> PAID</label>
+        <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'TO PAY' ? 'checked' : '' }}> TO PAY</label>
+        <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'TO BE BILLED' ? 'checked' : '' }}> TO BE BILLED</label>
     </div>
-    </body>
+
+    <div class="section"><span>FREIGHT</span> <span>{{ $lr['freight_amount'] ?? '-' }}</span></div>
+    <div class="section"><span>LR CHARGES</span> <span>{{ $lr['lr_charges'] ?? '-' }}</span></div>
+    <div class="section"><span>HAMALI</span> <span>{{ $lr['hamali'] ?? '-' }}</span></div>
+    <div class="section"><span>OTHER CHARGES</span> <span>{{ $lr['other_charges'] ?? '-' }}</span></div>
+    <div class="section"><span>GST</span> <span>{{ $lr['gst_amount'] ?? '-' }}</span></div>
+    <div class="section"><span>TOTAL FREIGHT</span> <span>{{ $lr['total_freight'] ?? '-' }}</span></div>
+    <div class="section"><span>LESS ADVANCE</span> <span>{{ $lr['less_advance'] ?? '-' }}</span></div>
+    <div class="section"><span>BALANCE FREIGHT</span> <span>{{ $lr['balance_freight'] ?? '-' }}</span></div>
+
+    @if (!$loop->last)
+        <hr>
+    @endif
+@endforeach
+
+                </div>
+            </div>
+        </div>
+
+        <div class="signature">
+            For: KHANDELWAL ROADLINES
+        </div>
+
+    </div>
+
+
+    <div class="terms">
+        <h3>TERMS & CONDITIONS</h3>
+        <ol>
+            <li>The company does not take responsibility for leakage, breakage, shortage or damage by rain, sun or
+                weather and sender is responsible for proper packing.</li>
+            <li>Fresh fruits are to be arrived at the risk of the consignor or consignee as they are apparently to
+                be spoiled on the way.</li>
+            <li>The company will send goods at earliest. Goods may be sent in one lot or parts, according to
+                convenience.</li>
+            <li>The goods will be delivered to the consignee or his agent against payment of all charges.</li>
+            <li>The goods will be delivered at destination – company’s godown, only unless settled otherwise in
+                writing.</li>
+            <li>The delivery of the goods will have to be taken within seven days after its arrival at destination.
+                Failing to the same will be liable to demurrage of Rs. 100/- per ton per day or Rs. 100/- per
+                package per day and will be stored at owner’s risk.</li>
+            <li>If there is any claim on a/c of this goods receipt, the same shall have to be informed within
+                fifteen days, failing to same will be considered as no claim.</li>
+            <li>The company takes absolutely no responsibility for delays or losses due to accident, strikes, fire
+                or any other causes beyond our control and due to breakdown of vehicle en route and for the
+                consequences thereof.</li>
+            <li>Once the delivery is given against a receipt, no claim will be entertained after that.</li>
+            <li>If any govt. authority assesses the goods wrongly, company will not be responsible for such faults
+                and claim if any shall be made on such items from govt. authority themselves, is to be paid by
+                consignee or consignor as the case may be.</li>
+        </ol>
+    </div>
+
+    <!-- Print Button -->
+  <button class="print-btn" onclick="window.print()">🖨️ Print LR-Consignment</button>
+
+
+</body>
 
 </html>

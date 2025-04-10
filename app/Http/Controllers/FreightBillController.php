@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Vehicle;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -20,17 +21,34 @@ class FreightBillController extends Controller
    {
     // Vehicles table से सभी records fetch करें
     $vehicles = Vehicle::all();
-    return view('admin.freight-bill.create', compact('vehicles'));
+    $users = User::all(); 
+    return view('admin.freight-bill.create', compact('vehicles','users'));
     }
 
-
-    public function edit($id)
+    public function edit($order_id)
     {
-        
-        // Return the edit view with the freightBill data
-        return view('admin.freight-bill.edit');
+        // dd($order_id);
+        $order = Order::with(['consignor', 'consignee'])->where('order_id', $order_id)->firstOrFail();
+        $vehicles = Vehicle::all();
+        $users = User::all();
+        // All associated LRs with same order_id (excluding the main one if needed)
+        $lrEntries = Order::where('order_id', $order->order_id)
+                        ->where('order_date', '!=', $order->order_date) // Optional: Exclude main by any field
+                        ->get();
+
+        return view('admin.freight-bill.edit', compact('order', 'lrEntries','vehicles','users'));
     }
     
+
+    public function show($order_id)
+    { 
+        $order = Order::with(['customer', 'consignor', 'consignee'])->where('order_id', $order_id)->firstOrFail();
+        // dd($order);
+        $vehicles = Vehicle::all();
+        $users = User::all();
+
+        return view('admin.freight-bill.view', compact('order','vehicles','users'));
+    }
 
     
 
@@ -108,5 +126,27 @@ class FreightBillController extends Controller
     }
    }
 
+
+
+   public function destroy($order_id)
+    {
+        // Get all orders with the same order_id
+        $orders = Order::where('order_id', $order_id)->get();
+    
+        if ($orders->isEmpty()) {
+            return response()->json(['status' => 'error', 'message' => 'No entries found for this order_id.'], 404);
+        }
+    
+        try {
+            // Delete all related LRs
+            foreach ($orders as $order) {
+                $order->delete();
+            }
+    
+            return response()->json(['status' => 'success', 'message' => 'All entries under this Order ID deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Error while deleting entries.'], 500);
+        }
+    }
 
 }

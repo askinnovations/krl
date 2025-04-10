@@ -50,10 +50,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('admin.orders.index');
         Route::get('/create', [OrderController::class, 'create'])->name('admin.orders.create');
         Route::post('/store', [OrderController::class, 'store'])->name('admin.orders.store');
-        Route::get('/edit/{id}', [OrderController::class, 'edit'])->name('admin.orders.edit');
-        Route::get('/view/{id}', [OrderController::class, 'show'])->name('admin.orders.view');
-        Route::post('/update/{id}', [OrderController::class, 'update'])->name('admin.orders.update');
-        Route::delete('/delete/{id}', [OrderController::class, 'destroy'])->name('admin.orders.delete');
+        Route::get('/edit/{order_id}', [OrderController::class, 'edit'])->name('admin.orders.edit');
+        Route::get('/view/{order_id}', [OrderController::class, 'show'])->name('admin.orders.view');
+        Route::post('/update/{order_id}', [OrderController::class, 'update'])->name('admin.orders.update');
+        Route::delete('/delete/{order_id}', [OrderController::class, 'destroy'])->name('admin.orders.delete');
     });
     
     
@@ -62,10 +62,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [ConsignmentNoteController::class, 'index'])->name('admin.consignments.index');
         Route::get('/create', [ConsignmentNoteController::class, 'create'])->name('admin.consignments.create');
         Route::post('/store', [ConsignmentNoteController::class, 'store'])->name('admin.consignments.store');
-        Route::get('/edit/{id}', [ConsignmentNoteController::class, 'edit'])->name('admin.consignments.edit');
-        Route::get('/view/{id}', [ConsignmentNoteController::class, 'show'])->name('admin.consignments.view');
+        Route::get('/edit/{order_id}', [ConsignmentNoteController::class, 'edit'])->name('admin.consignments.edit');
+        Route::get('/view/{order_id}', [ConsignmentNoteController::class, 'show'])->name('admin.consignments.view');
         Route::post('/update/{order_id}', [ConsignmentNoteController::class, 'update'])->name('admin.consignments.update');
-        Route::delete('/delete/{id}', [ConsignmentNoteController::class, 'destroy'])->name('admin.consignments.delete');
+        Route::delete('/delete/{order_id}', [ConsignmentNoteController::class, 'destroy'])->name('admin.consignments.delete');
     });
 
     // Freight Bill Management
@@ -73,10 +73,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [FreightBillController::class, 'index'])->name('admin.freight-bill.index');
         Route::get('/create', [FreightBillController::class, 'create'])->name('admin.freight-bill.create');
         Route::post('/store', [FreightBillController::class, 'store'])->name('admin.freight-bill.store');
-        Route::get('/view/{id}', [FreightBillController::class, 'show'])->name('admin.freight-bill.view');
-        Route::get('/edit/{id}', [FreightBillController::class, 'edit'])->name('admin.freight-bill.edit');
-        Route::post('/update/{id}', [FreightBillController::class, 'update'])->name('admin.freight-bill.update');
-        Route::delete('/delete/{id}', [FreightBillController::class, 'destroy'])->name('admin.freight-bill.delete');
+        Route::get('/view/{order_id}', [FreightBillController::class, 'show'])->name('admin.freight-bill.view');
+        Route::get('/edit/{order_id}', [FreightBillController::class, 'edit'])->name('admin.freight-bill.edit');
+        Route::post('/update/{order_id}', [FreightBillController::class, 'update'])->name('admin.freight-bill.update');
+        Route::delete('/delete/{order_id}', [FreightBillController::class, 'destroy'])->name('admin.freight-bill.delete');
     });
 
     // Tyre Management

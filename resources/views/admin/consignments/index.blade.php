@@ -33,36 +33,85 @@
                    </a>
                </div>
                <div class="card-body">
+                 
+
+
                   <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
-                     <thead>
-                        <tr>
-                           <th>S.No</th>
-                           <th>Order ID</th>
-                           <th>Consignment No</th>
-                           <th>Consignor</th>
-                           <th>Consignee</th>
-                           <th>Date</th>
-                           <th>From</th>
-                           <th>To</th>
-                           
-                           <th>Action</th>
-                        </tr>
-                     </thead>
-                    <tbody>
-                        @foreach($orders as $key => $order)
-                        <tr class="order-row" data-id="{{ $order->id }}">
-                            <td>{{ $key + 1 }}</td> <!-- Serial Number -->
-                            <td>{{ $order->order_id }}</td>
-                            <td>{{ $order->lr_number}}</td>
-                            <td>{{ $order->consignor_name}}</td>
-                            <td>{{ $order->consignee_name}}</td>
-                            <td>{{ $order->lr_date }}</td>
-                            <td>{{ $order->from_location }}</td>
-                            <td>{{ $order->to_location }}</td>
-                            
-                            <td>
-                           
-                            <a href="{{ route('admin.consignments.view', $order->order_id) }}" class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i>
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Order ID</th>
+            <th>LR NO</th>
+            <th>Consignor</th>
+            <th>Consignee</th>
+            <th>Date</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach($orders as $key => $order)
+        @php
+            $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
+        @endphp
+        <tr class="lr-row" data-id="{{ $order->id }}">
+            <td>{{ $loop->iteration }}</td>
+            <td>{{ $order->order_id }}</td>
+
+            {{-- LR Numbers --}}
+            <td>
+                @foreach($lrDetails as $lr)
+                    {{ $lr['lr_number'] ?? '-' }}<br>
+                @endforeach
+            </td>
+
+            {{-- Consignors --}}
+            <td>
+                @foreach($lrDetails as $lr)
+                    @php
+                        $consignorUser = \App\Models\User::find($lr['consignor_id'] ?? null);
+                        $consignorName = $order->consignor->name ?? ($consignorUser->name ?? '-');
+                    @endphp
+                     {{ $consignorName }}<br>
+                @endforeach
+            </td>
+
+            {{-- Consignees --}}
+            <td>
+                @foreach($lrDetails as $lr)
+                    @php
+                        $consigneeUser = \App\Models\User::find($lr['consignee_id'] ?? null);
+                        $consigneeName = $order->consignee->name ?? ($consigneeUser->name ?? '-');
+                    @endphp
+                     {{ $consigneeName }}<br>
+                @endforeach
+            </td>
+
+            {{-- LR Dates --}}
+            <td>
+                @foreach($lrDetails as $lr)
+                     {{ $lr['lr_date'] ?? '-' }}<br>
+                @endforeach
+            </td>
+
+            {{-- From --}}
+            <td>
+                @foreach($lrDetails as $lr)
+                     {{ $lr['from_location'] ?? '-' }}<br>
+                @endforeach
+            </td>
+
+            {{-- To --}}
+            <td>
+                @foreach($lrDetails as $lr)
+                     {{ $lr['to_location'] ?? '-' }}<br>
+                @endforeach
+            </td>
+
+            {{-- Action --}}
+            <td>
+            <a href="{{ route('admin.consignments.view', $order->order_id) }}" class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i>
                             </a>
 
                             
@@ -73,13 +122,10 @@
 
                               <a href="{{ route('admin.consignments.delete', $order->order_id) }}" class="btn btn-sm btn-light delete-btn"><i class="fas fa-trash text-danger"></i></a>
                             </td>
-
-
-                              
-                        </tr>
-                        @endforeach
-                    </tbody>
-                  </table>
+        </tr>
+    @endforeach
+    </tbody>
+</table>
                </div>
             </div>
          </div>
@@ -92,6 +138,8 @@
 </div>
 <!-- end main content-->
 
+<!-- Add this before any script that uses jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

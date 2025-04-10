@@ -41,19 +41,41 @@
                         <input type="text" name="lr_number" value="{{ old('lr_number', $order->lr_number) }}" class="form-control"
                            placeholder="Enter sender's name">
                      </div>
+                     <select name="consignor_id" id="consignor_id" class="form-select" onchange="setConsignorDetails()">
+                  <option value="">Select Consignor Name</option>
+                  @foreach($users as $user)
+                  @php
+                  $addresses = json_decode($user->address, true);
+                  $formattedAddress = '';
+                  if (!empty($addresses) && is_array($addresses)) {
+                  $first = $addresses[0]; // only first address
+                  $formattedAddress = trim(
+                  ($first['full_address'] ?? '') . ', ' .
+                  ($first['city'] ?? '') . ', ' .
+                  ($first['pincode'] ?? '')
+                  );
+                  }
+                  $isSelected = old('consignor_id', isset($order) ? $order->consignor_id : '') == $user->id;
+                  @endphp
+                  <option 
+                  value="{{ $user->id }}"
+                  data-gst-consignor="{{ $user->gst_number }}"
+                  data-address-consignor="{{ $formattedAddress }}"
+                  {{ $isSelected ? 'selected' : '' }}>
+                  {{ $user->name }}
+                  </option>
+                  @endforeach
+               </select>
+
                      <div class="mb-3">
-                        <label class="form-label">Consignor Name</label>
-                        <input type="text" name="consignor_name"class="form-control" value="{{ old('consignor_name', $order->consignor_name) }}" 
-                           placeholder="Enter sender's name">
+                     <label class="form-label">Consignor Loading Address</label>
+                        <textarea name="consignor_loading"  id="consignor_loading" class="form-control" rows="2" 
+                           placeholder="Enter all addresses"> {{ old('consignor_loading', isset($order) ? $order->consignor_loading : '') }} </textarea>
                      </div>
                      <div class="mb-3">
-                        <label class="form-label">Consignor Loading Address</label>
-                        <textarea name="consignor_loading" class="form-control" rows="2" 
-                           placeholder="Enter all addresses">{{ old('consignor_loading', $order->consignor_loading) }}</textarea>
-                     </div>
-                     <div class="mb-3">
-                        <label class="form-label">Consignor GST</label>
-                        <input type="text" name="consignor_gst" class="form-control" value="{{ old('consignor_gst', $order->consignor_gst) }}" placeholder="Enter GST numbers">
+                     
+                     <label class="form-label">Consignor GST</label>
+                        <input type="text" name="consignor_gst" id="consignor_gst"class="form-control" value="{{ old('consignor_gst', isset($order) ? $order->consignor_gst : '') }}" placeholder="Enter GST numbers" readonly>
                      </div>
                   </div>
                   <!-- Consignee Details -->
@@ -62,21 +84,45 @@
                      <div class="mb-3">
                         <label class="form-label">Lr date</label>
                         <input type="date" name="lr_date" class="form-control" value="{{ old('lr_date', $order->lr_date) }}"
-                           placeholder="Enter receiver's name">
+                           placeholder="Enter lr name">
                      </div>
                      <div class="mb-3">
-                        <label class="form-label">Consignee Name</label>
-                        <input type="text" name="consignee_name" class="form-control" value="{{ old('consignee_name', $order->consignee_name) }}"
-                           placeholder="Enter receiver's name">
+                     <select name="consignee_id" id="consignee_id" class="form-select" onchange="setConsigneeDetails()">
+                  <option value="">Select Consignor Name</option>
+                  @foreach($users as $user)
+                  @php
+                  $addresses = json_decode($user->address, true);
+                  $formattedAddress = '';
+                  if (!empty($addresses) && is_array($addresses)) {
+                  $first = $addresses[0]; // only first address
+                  $formattedAddress = trim(
+                  ($first['full_address'] ?? '') . ', ' .
+                  ($first['city'] ?? '') . ', ' .
+                  ($first['pincode'] ?? '')
+                  );
+                  }
+                  $isSelected = old('consignee_id', isset($order) ? $order->consignee_id : '') == $user->id;
+                  @endphp
+                  <option 
+                  value="{{ $user->id }}"
+                  data-gst-consignee="{{ $user->gst_number }}"
+                  data-address-consignee="{{ $formattedAddress }}"
+                  {{ $isSelected ? 'selected' : '' }}>
+                  {{ $user->name }}
+                  </option>
+                  @endforeach
+               </select>
                      </div>
                      <div class="mb-3">
-                        <label class="form-label">Consignee Unloading Address</label>
-                        <textarea name="consignee_unloading" class="form-control" rows="2"
-                           placeholder="Enter all addresses"> {{ old('consignee_unloading', $order->consignee_unloading) }}</textarea>
+                     
+                     <label class="form-label">Consignee Unloading Address</label>
+                        <textarea name="consignee_unloading" id="consignee_unloading" class="form-control" rows="2"
+                           placeholder="Enter all addresses"> {{ old('consignee_unloading', isset($order) ? $order->consignee_unloading : '') }} </textarea>
                      </div>
                      <div class="mb-3">
-                        <label class="form-label">Consignee GST</label>
-                        <input name="consignee_gst" value="{{ old('consignee_gst', $order->consignee_gst) }}" type="text" class="form-control" placeholder="Enter GST numbers">
+                     
+                     <label class="form-label">Consignee GST</label>
+                        <input name="consignee_gst" id="consignee_gst" value="{{ old('consignee_gst', isset($order) ? $order->consignee_gst : '') }}" type="text" class="form-control" placeholder="Enter GST numbers">
                      </div>
                   </div>
                </div>
@@ -84,7 +130,7 @@
                   <!-- Date -->
                   <div class="col-md-4">
                      <div class="mb-3">
-                        <label class="form-label">📅 Date</label>
+                        <label class="form-label">📅 Vehicle  Date</label>
                         <input name="vehicle_date"  value="{{ old('vehicle_date', $order->vehicle_date) }}"type="date" class="form-control">
                      </div>
                   </div>
@@ -167,7 +213,7 @@
                      <h5 class="mb-3 pb-3">📦 Cargo Description</h5>
                      <div class="mb-3 d-flex gap-3">
                         <div class="form-check">
-                           <input class="form-check-input" type="radio" name="cargo_description_type" id="singleDoc" value="single" checked>
+                           <input class="form-check-input" type="radio" name="cargo_description_type" id="singleDoc" value="single" {{ old('cargo_description_type', 'single') == 'single' ? 'checked' : '' }}>
                            <label class="form-check-label" for="singleDoc">Single Document</label>
                         </div>
                         <div class="form-check">
@@ -321,6 +367,8 @@
       </div>
    </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
    let cargoIndex = {{ count($cargoData) }};
    
@@ -355,4 +403,40 @@
        button.closest('tr').remove();
    }
 </script>
+
+<script>
+   function setConsignorDetails() {
+       const selected = document.getElementById('consignor_id');
+       const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignor');
+       const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignor');
+   
+       document.getElementById('consignor_gst').value = gst || '';
+       document.getElementById('consignor_loading').value = address || '';
+   }
+   // Call on page load (for edit mode)
+   document.addEventListener('DOMContentLoaded', function () {
+       const customerSelect = document.getElementById('consignor_id');
+       if (customerSelect.value !== '') {
+        setConsignorDetails();
+       }
+   });
+</script>
+<script>
+   function setConsigneeDetails() {
+       const selected = document.getElementById('consignee_id');
+       const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignee');
+       const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignee');
+   
+       document.getElementById('consignee_gst').value = gst || '';
+       document.getElementById('consignee_unloading').value = address || '';
+   }
+   // Call on page load (for edit mode)
+   document.addEventListener('DOMContentLoaded', function () {
+       const customerSelect = document.getElementById('consignee_id');
+       if (customerSelect.value !== '') {
+        setConsigneeDetails();
+       }
+   });
+</script>
+
 @endsection

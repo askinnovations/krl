@@ -15,7 +15,7 @@
    ⬅ Back to Listing
    </a>
 </div>
-<form method="POST" action="{{ route('admin.orders.store') }}">
+<form method="POST" action="{{ route('admin.orders.store') }}" enctype="multipart/form-data">
    @csrf
    <div class="card">
       <div class="card-header">
@@ -23,18 +23,16 @@
       </div>
       <div class="card-body">
          <div class="row">
-            <!-- Order ID (आप चाहें तो इसे readonly भी रख सकते हैं, या server side generate कर सकते हैं) -->
-            <div class="col-md-3">
-               <div class="mb-3">
-                  <label class="form-label">📌 Order ID</label>
-                  <input type="text" name="order_id" class="form-control" placeholder="Enter Order ID">
-               </div>
-            </div>
+            
             <!-- Description -->
             <div class="col-md-3">
                <div class="mb-3">
                   <label class="form-label">📝 Consignment Details</label>
                   <textarea name="description" class="form-control" rows="2" placeholder="Enter order description"></textarea>
+                    @error('description')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+
                </div>
             </div>
             <!-- Order Date -->
@@ -128,16 +126,19 @@
          </div>
          <!-- Submit Button -->
          <div class="row mt-4 mb-4">
-            <div class="col-12 text-center">
-               <button type="submit" class="btn btn-primary">
-               <i class="fas fa-save"></i> Save Order & LR Details
-               </button>
-            </div>
+         <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Order & LR Details
+            </button>
+        </div>
+
          </div>
       </div>
    </div>
 </form>
 <!-- JavaScript to Add & Remove LR Consignments -->
+
+
 <script>
    var vehicles = @json($vehicles);
    
@@ -181,40 +182,40 @@
                      <input type="number" name="lr[${counter}][lr_number]" class="form-control" placeholder="Enter lr number name">
                    </div>
                    <h5>📦 Consignor (Sender)</h5>
-                  <select name="consignor_id" id="consignor_id" class="form-select" onchange="setConsignorDetails()">
-                    <option value="">Select Consignor Name</option>
-                    @foreach($users as $user)
-                        @php
-                            $addresses = json_decode($user->address, true);
-                            $formattedAddress = '';
-                  
-                            if (!empty($addresses) && is_array($addresses)) {
-                                $first = $addresses[0]; // Use first address if multiple
-                                $formattedAddress = trim(
-                                    ($first['full_address'] ?? '') . ', ' .
-                                    ($first['city'] ?? '') . ', ' .
-                                    ($first['pincode'] ?? '')
-                                );
-                            }
-                        @endphp
-                        <option 
-                            value="{{ $user->id }}"
-                            data-gst-consignor="{{ $user->gst_number }}"
-                            data-address-consignor="{{ $formattedAddress }}">
-                            {{ $user->name }}
-                        </option>
-                    @endforeach
-                  </select>
-   
-   
-                   <div class="mb-3">
-                     <label class="form-label">Consignor Loading Address</label>
-                     <textarea name="consignor_loading" id="consignor_loading" class="form-control" rows="2" placeholder="Enter loading address"></textarea>
-                   </div>
-                   <div class="mb-3">
-                     <label class="form-label">Consignor GST</label>
-                     <input type="text" name="consignor_gst" id="consignor_gst" class="form-control" placeholder="Enter GST number">
-                   </div>
+                  <select name="lr[${counter}][consignor_id]" id="consignor_id_${counter}" class="form-select" onchange="setConsignorDetails(${counter})">
+  <option value="">Select Consignor Name</option>
+  @foreach($users as $user)
+      @php
+          $addresses = json_decode($user->address, true);
+          $formattedAddress = '';
+          if (!empty($addresses) && is_array($addresses)) {
+              $first = $addresses[0];
+              $formattedAddress = trim(
+                  ($first['full_address'] ?? '') . ', ' .
+                  ($first['city'] ?? '') . ', ' .
+                  ($first['pincode'] ?? '')
+              );
+          }
+      @endphp
+      <option 
+          value="{{ $user->id }}"
+          data-gst-consignor="{{ $user->gst_number }}"
+          data-address-consignor="{{ $formattedAddress }}">
+          {{ $user->name }}
+      </option>
+  @endforeach
+</select>
+
+<div class="mb-3">
+  <label class="form-label">Consignor Loading Address</label>
+  <textarea name="lr[${counter}][consignor_loading]" id="consignor_loading_${counter}" class="form-control" rows="2" placeholder="Enter loading address"></textarea>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Consignor GST</label>
+  <input type="text" name="lr[${counter}][consignor_gst]" id="consignor_gst_${counter}" class="form-control" placeholder="Enter GST number">
+</div>
+
                  </div>
                  
                  <!-- Consignee Details -->
@@ -224,41 +225,40 @@
                      <input type="date" name="lr[${counter}][lr_date]" class="form-control" placeholder="Enter lr date">
                    </div>
                    <h5>📦 Consignee (Receiver)</h5>
-                  <select name="consignee_id" id="consignee_id" class="form-select" onchange="setConsigneeDetails()">
-                     <option value="">Select Consignee Name</option>
-                      @foreach($users as $user)
-                        @php
-                            $addresses = json_decode($user->address, true);
-                            $formattedAddress = '';
-                      
-                            if (!empty($addresses) && is_array($addresses)) {
-                                $first = $addresses[0]; // assuming only 1 or using the first
-                                $formattedAddress = trim(
-                                    ($first['full_address'] ?? '') . ', ' .
-                                    ($first['city'] ?? '') . ', ' .
-                                    ($first['pincode'] ?? '')
-                                );
-                            }
-                        @endphp
-                        <option 
-                            value="{{ $user->id }}"
-                            data-gst-consignee="{{ $user->gst_number }}"
-                            data-address-consignee="{{ $formattedAddress }}">
-                            {{ $user->name }}
-                        </option>
-                      @endforeach
-   
-                      
-                  </select>
-                   <div class="mb-3">
-                     <label class="form-label">Consignee Unloading Address</label>
-                     
-                     <textarea name="consignee_unloading" id="consignee_unloading" class="form-control" rows="2" placeholder="Enter unloading address"></textarea>
-                   </div>
-                   <div class="mb-3">
-                     <label class="form-label">Consignee GST</label>
-                     <input type="text" name="consignee_gst" id="consignee_gst"  class="form-control" placeholder="Enter GST number">
-                   </div>
+                  <select name="lr[${counter}][consignee_id]" id="consignee_id_${counter}" class="form-select" onchange="setConsigneeDetails(${counter})">
+  <option value="">Select Consignee Name</option>
+  @foreach($users as $user)
+      @php
+          $addresses = json_decode($user->address, true);
+          $formattedAddress = '';
+          if (!empty($addresses) && is_array($addresses)) {
+              $first = $addresses[0];
+              $formattedAddress = trim(
+                  ($first['full_address'] ?? '') . ', ' .
+                  ($first['city'] ?? '') . ', ' .
+                  ($first['pincode'] ?? '')
+              );
+          }
+      @endphp
+      <option 
+          value="{{ $user->id }}"
+          data-gst-consignee="{{ $user->gst_number }}"
+          data-address-consignee="{{ $formattedAddress }}">
+          {{ $user->name }}
+      </option>
+  @endforeach
+</select>
+
+<div class="mb-3">
+  <label class="form-label">Consignee Unloading Address</label>
+  <textarea name="lr[${counter}][consignee_unloading]" id="consignee_unloading_${counter}" class="form-control" rows="2" placeholder="Enter unloading address"></textarea>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Consignee GST</label>
+  <input type="text" name="lr[${counter}][consignee_gst]" id="consignee_gst_${counter}" class="form-control" placeholder="Enter GST number">
+</div>
+
    
                  </div>
                </div>
@@ -339,8 +339,8 @@
                  </div>
                </div>
    
-                                                               <!-- Cargo Description Section -->
-                 <div class="row mt-4">
+                <!-- Cargo Description Section -->
+                <div class="row mt-4">
                      <div class="col-12">
                          <h5 class="mb-3 pb-3">📦 Cargo Description</h5>
    
@@ -376,49 +376,42 @@
                                          </tr>
                                      </thead>
                                      <tbody id="cargoTableBody">
-                                         <tr>
-                                             <td><input type="number" class="form-control" name="cargo[0][packages_no]" placeholder="0"></td>
-                                             <td>
-                                                 <select class="form-select" name="cargo[0][package_type]">
-                                                     <option>Pallets</option>
-                                                     <option>Cartons</option>
-                                                     <option>Bags</option>
-                                                 </select>
-                                             </td>
-                                             <td><input type="text" class="form-control" name="cargo[0][package_description]" placeholder="Enter description"></td>
-                                             <td><input type="number" class="form-control" name="cargo[0][weight]" placeholder="0"></td>
-                                             <td><input type="number" class="form-control" name="cargo[0][actual_weight]" placeholder="0"></td>
-                                             <td><input type="number" class="form-control" name="cargo[0][charged_weight]" placeholder="0"></td>
-                                             <td><input type="text" class="form-control" name="cargo[0][document_no]" placeholder="Doc No."></td>
-                                             <td><input type="text" class="form-control" name="cargo[0][document_name]" placeholder="Doc Name"></td>
-                                             <td><input type="date" class="form-control" name="cargo[0][document_date]"></td>
-                                             <td><input type="text" class="form-control" name="cargo[0][eway_bill]" placeholder="Eway Bill No."></td>
-                                             <td><input type="date" class="form-control" name="cargo[0][valid_upto]"></td>
-                                             <td>
-                                                 <button class="btn btn-danger btn-sm" onclick="removeRow(this)">🗑</button>
-                                             </td>
-                                         </tr>
-                                     </tbody>
+                                          <tr>
+                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][packages_no]" placeholder="0"></td>
+                                              <td>
+                                                  <select class="form-select" name="lr[${counter}][cargo][0][package_type]">
+                                                      <option>Pallets</option>
+                                                      <option>Cartons</option>
+                                                      <option>Bags</option>
+                                                  </select>
+                                              </td>
+                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][package_description]" placeholder="Enter description"></td>
+                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][weight]" placeholder="0"></td>
+                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][actual_weight]" placeholder="0"></td>
+                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][charged_weight]" placeholder="0"></td>
+                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][document_no]" placeholder="Doc No."></td>
+                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][document_name]" placeholder="Doc Name"></td>
+                                              <td><input type="date" class="form-control" name="lr[${counter}][cargo][0][document_date]"></td>
+                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][eway_bill]" placeholder="Eway Bill No."></td>
+                                              <td><input type="date" class="form-control" name="lr[${counter}][cargo][0][valid_upto]"></td>
+                                              <td>
+                                                  <button class="btn btn-danger btn-sm" onclick="removeRow(this)">🗑</button>
+                                              </td>
+                                          </tr>
+                                      </tbody>
+
                                  </table>
                              </div>
-   
-   
                          <!-- Add Row Button -->
-   
-                         <div class="text-end mt-2">
+                       <div class="text-end mt-2">
                              <button type="button" class="btn btn-sm" style="background: #ca2639; color: white;"
                      onclick="addRow()">
                      <span style="filter: invert(1);">➕</span> Add Row</button>
                       </div>
-       </div>
-   </div>
-               
-               
-   
-   
-               
-               
-               <!-- Freight Details Section -->
+                    </div>
+                </div>
+
+    <!-- Freight Details Section -->
                <div class="row mt-4">
                  <div class="col-12">
                    <h5 class="pb-3">🚚 Freight Details</h5>
@@ -524,23 +517,22 @@
 </script>
 <script>
    function addRow() {
-       let table = document.getElementById('cargoTableBody');
-       let rowCount = table.rows.length;
-   
-       // Clone the first row
-       let newRow = table.rows[0].cloneNode(true);
-   
-       // Update name attributes with new index
-       [...newRow.querySelectorAll('input, select')].forEach(function (input) {
-           if (input.name) {
-               input.name = input.name.replace(/\[\d+\]/, '[' + rowCount + ']');
-               input.value = ''; // Clear value
-           }
-       });
-   
-       table.appendChild(newRow);
-   }
-   
+    let table = document.getElementById('cargoTableBody');
+    let rowCount = table.rows.length;
+
+    let newRow = table.rows[0].cloneNode(true);
+
+    [...newRow.querySelectorAll('input, select')].forEach(function (input) {
+        if (input.name) {
+            // Match the full pattern: lr[<num>][cargo][<num>][field]
+            input.name = input.name.replace(/(lr\[\d+]\[cargo])\[\d+]/, `$1[${rowCount}]`);
+            input.value = ''; // Clear value
+        }
+    });
+
+    table.appendChild(newRow);
+}
+
    function removeRow(button) {
        let table = document.getElementById('cargoTableBody');
        let row = button.closest('tr');
@@ -560,23 +552,34 @@
    }
 </script>
 <script>
-   function setConsignorDetails() {
-       const selected = document.getElementById('consignor_id');
-       const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignor');
-       const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignor');
-   
-       document.getElementById('consignor_gst').value = gst || '';
-       document.getElementById('consignor_loading').value = address || '';
-   }
+  function setConsignorDetails(counter) {
+      const selected = document.getElementById(`consignor_id_${counter}`);
+      const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignor');
+      const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignor');
+
+      document.getElementById(`consignor_gst_${counter}`).value = gst || '';
+      document.getElementById(`consignor_loading_${counter}`).value = address || '';
+  }
 </script>
+
 <script>
-   function setConsigneeDetails() {
-       const selected = document.getElementById('consignee_id');
-       const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignee');
-       const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignee');
-   
-       document.getElementById('consignee_gst').value = gst || '';
-       document.getElementById('consignee_unloading').value = address || '';
-   }
+  function setConsigneeDetails(counter) {
+      const selected = document.getElementById(`consignee_id_${counter}`);
+      const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignee');
+      const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignee');
+
+      document.getElementById(`consignee_gst_${counter}`).value = gst || '';
+      document.getElementById(`consignee_unloading_${counter}`).value = address || '';
+  }
 </script>
+<!-- jQuery (required first) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
 @endsection

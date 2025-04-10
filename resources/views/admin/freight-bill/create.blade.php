@@ -36,42 +36,88 @@
                     <!-- Consignor -->
                     <div class="col-md-6">
                         <h5>📦 Consignor (Sender)</h5>
-                        <div class="mb-3">
-                            <label class="form-label">Consignor Name</label>
-                            <input type="text" name="consignor_name" class="form-control" placeholder="Enter sender's name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Consignor Loading Address</label>
-                            <textarea name="consignor_loading" class="form-control" rows="2" placeholder="Enter loading address"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Consignor GST</label>
-                            <input type="text" name="consignor_gst" class="form-control" placeholder="Enter GST number">
-                        </div>
+                        <select name="consignee_id" id="consignee_id" class="form-select" onchange="setConsigneeDetails()">
+                     <option value="">Select Consignee Name</option>
+                      @foreach($users as $user)
+                        @php
+                            $addresses = json_decode($user->address, true);
+                            $formattedAddress = '';
+                      
+                            if (!empty($addresses) && is_array($addresses)) {
+                                $first = $addresses[0]; // assuming only 1 or using the first
+                                $formattedAddress = trim(
+                                    ($first['full_address'] ?? '') . ', ' .
+                                    ($first['city'] ?? '') . ', ' .
+                                    ($first['pincode'] ?? '')
+                                );
+                            }
+                        @endphp
+                        <option 
+                            value="{{ $user->id }}"
+                            data-gst-consignee="{{ $user->gst_number }}"
+                            data-address-consignee="{{ $formattedAddress }}">
+                            {{ $user->name }}
+                        </option>
+                      @endforeach
+   
+                      
+                  </select>
+                   <div class="mb-3">
+                     <label class="form-label">Consignee Unloading Address</label>
+                     
+                     <textarea name="consignee_unloading" id="consignee_unloading" class="form-control" rows="2" placeholder="Enter unloading address"></textarea>
+                   </div>
+                   <div class="mb-3">
+                     <label class="form-label">Consignee GST</label>
+                     <input type="text" name="consignee_gst" id="consignee_gst"  class="form-control" placeholder="Enter GST number">
+                   </div>
                     </div>
 
                     <!-- Consignee -->
                     <div class="col-md-6">
                         <h5>📦 Consignee (Receiver)</h5>
-                        <div class="mb-3">
-                            <label class="form-label">Consignee Name</label>
-                            <input type="text" name="consignee_name" class="form-control" placeholder="Enter receiver's name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Consignee Unloading Address</label>
-                            <textarea name="consignee_unloading" class="form-control" rows="2" placeholder="Enter unloading address"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Consignee GST</label>
-                            <input type="text" name="consignee_gst" class="form-control" placeholder="Enter GST number">
-                        </div>
+                        <select name="consignee_id" id="consignee_id" class="form-select" onchange="setConsigneeDetails()">
+                     <option value="">Select Consignee Name</option>
+                      @foreach($users as $user)
+                        @php
+                            $addresses = json_decode($user->address, true);
+                            $formattedAddress = '';
+                      
+                            if (!empty($addresses) && is_array($addresses)) {
+                                $first = $addresses[0]; // assuming only 1 or using the first
+                                $formattedAddress = trim(
+                                    ($first['full_address'] ?? '') . ', ' .
+                                    ($first['city'] ?? '') . ', ' .
+                                    ($first['pincode'] ?? '')
+                                );
+                            }
+                        @endphp
+                        <option 
+                            value="{{ $user->id }}"
+                            data-gst-consignee="{{ $user->gst_number }}"
+                            data-address-consignee="{{ $formattedAddress }}">
+                            {{ $user->name }}
+                        </option>
+                      @endforeach
+   
+                      
+                  </select>
+                   <div class="mb-3">
+                     <label class="form-label">Consignee Unloading Address</label>
+                     
+                     <textarea name="consignee_unloading" id="consignee_unloading" class="form-control" rows="2" placeholder="Enter unloading address"></textarea>
+                   </div>
+                   <div class="mb-3">
+                     <label class="form-label">Consignee GST</label>
+                     <input type="text" name="consignee_gst" id="consignee_gst"  class="form-control" placeholder="Enter GST number">
+                   </div>
                     </div>
                 </div>
                 <div class="row">
                                         <!-- Date -->
                                         <div class="col-md-4">
                                             <div class="mb-3">
-                                                <label class="form-label">📅 Date</label>
+                                                <label class="form-label">📅 Vehicle Date</label>
                                                 <input name="vehicle_date" type="date" class="form-control">
                                             </div>
                                         </div>
@@ -163,4 +209,25 @@
      
    </div>
 </div>
+
+<script>
+   function setConsignorDetails() {
+       const selected = document.getElementById('consignor_id');
+       const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignor');
+       const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignor');
+   
+       document.getElementById('consignor_gst').value = gst || '';
+       document.getElementById('consignor_loading').value = address || '';
+   }
+</script>
+<script>
+   function setConsigneeDetails() {
+       const selected = document.getElementById('consignee_id');
+       const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignee');
+       const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignee');
+   
+       document.getElementById('consignee_gst').value = gst || '';
+       document.getElementById('consignee_unloading').value = address || '';
+   }
+</script>
 @endsection

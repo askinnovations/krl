@@ -62,7 +62,7 @@
                             </td>
                             <td>
                            
-                            <a href="#" class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i>
+                            <a href="{{ route('admin.orders.view', $order->order_id) }}" class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i>
                             </a>
 
                             
