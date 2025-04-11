@@ -30,15 +30,22 @@ class OrderController extends Controller
     return view('admin.orders.create', compact('vehicles', 'users'));
    }
 
-   public function edit($order_id){
+   public function edit($order_id)
+   {
+       $vehicles = Vehicle::all();
+       $users = User::all();
+       $order = Order::where('order_id', $order_id)->first();
    
-    $vehicles = Vehicle::all();
-    $users = User::all();
-    $order = Order::where('order_id', $order_id)->first();
+       // Only decode if it's a string
+       if (is_string($order->lr)) {
+           $order->lr = json_decode($order->lr, true);
+       }
    
-
-    return view('admin.orders.edit', compact('order','vehicles','users'));
-}
+    //    return $order->lr;
+   
+       return view('admin.orders.edit', compact('order', 'vehicles', 'users'));
+   }
+   
 
     public function show($order_id){
     
@@ -146,6 +153,7 @@ public function store(Request $request)
 
 public function update(Request $request, $order_id)
 {
+    // return($request->all());
     
     $order = Order::findOrFail($order_id);
 
@@ -229,6 +237,8 @@ public function update(Request $request, $order_id)
     return redirect()->route('admin.orders.index')
         ->with('success', 'Order stored with nested LR and cargo arrays successfully!');
 }
+
+
 
 
 

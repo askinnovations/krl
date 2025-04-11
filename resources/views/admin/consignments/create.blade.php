@@ -40,11 +40,11 @@
                                             <div class="mb-3">
                                                 <label class="form-label">Lr Number</label>
                                                 <input type="text" name="lr_number"class="form-control"
-                                                    placeholder="Enter lr number">
+                                                    placeholder="Enter lr number" required>
                                             </div>
                                             <h5>📦 Consignor (Sender)</h5>
                                             
-                                            <select name="consignor_id" id="consignor_id" class="form-select" onchange="setConsignorDetails()">
+                                            <select name="consignor_id" id="consignor_id" class="form-select" onchange="setConsignorDetails()" required>
                     <option value="">Select Consignor Name</option>
                     @foreach($users as $user)
                         @php
@@ -72,11 +72,11 @@
                                             <div class="mb-3">
                                                 <label class="form-label">Consignor Loading Address</label>
                                                 <textarea name="consignor_loading" id="consignor_loading" class="form-control" rows="2"
-                                                    placeholder="Enter all addresses"></textarea>
+                                                    placeholder="Enter all addresses" required></textarea>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Consignor GST</label>
-                                                <input type="text" name="consignor_gst" id="consignor_gst" class="form-control" placeholder="Enter GST numbers">
+                                                <input type="text" name="consignor_gst" id="consignor_gst" class="form-control" placeholder="Enter GST numbers" required>
                                             </div>
 
                                         </div>
@@ -90,7 +90,7 @@
                                             </div>
                                             <h5>📦 Consignee (Receiver)</h5>
                                             
-                                            <select name="consignee_id" id="consignee_id" class="form-select" onchange="setConsigneeDetails()">
+                                            <select name="consignee_id" id="consignee_id" class="form-select" onchange="setConsigneeDetails()" required>
                      <option value="">Select Consignee Name</option>
                       @foreach($users as $user)
                         @php
@@ -119,11 +119,11 @@
                                             <div class="mb-3">
                                                 <label class="form-label">Consignee Unloading Address</label>
                                                 <textarea name="consignee_unloading" id="consignee_unloading" class="form-control" rows="2"
-                                                    placeholder="Enter all addresses"></textarea>
+                                                    placeholder="Enter all addresses" required></textarea>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Consignee GST</label>
-                                                <input name="consignee_gst" id="consignee_gst" type="text" class="form-control" placeholder="Enter GST numbers">
+                                                <input name="consignee_gst" id="consignee_gst" type="text" class="form-control" placeholder="Enter GST numbers" required>
                                             </div>
                                         </div>
                                     </div>
@@ -133,7 +133,7 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label class="form-label">📅  Vehicle Date</label>
-                                                <input name="vehicle_date" type="date" class="form-control">
+                                                <input name="vehicle_date" type="date" class="form-control" required>
                                             </div>
                                         </div>
 
@@ -141,7 +141,7 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label class="form-label">🚛 Vehicle Type</label>
-                                                <select name="vehicle_type" class="form-select">
+                                                <select name="vehicle_type" class="form-select" required>
                                                     <option selected>Select Type</option>
                                                     @foreach ($vehicles as $vehicle)
                                                     <option value="{{ $vehicle->vehicle_type }}|{{ $vehicle->vehicle_no }}">
@@ -158,11 +158,11 @@
                                             <label class="form-label">🛻 Vehicle Ownership</label>
                                             <div class="d-flex gap-3">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="vehicle_ownership" value="Own" checked>
+                                                <input class="form-check-input" type="radio" name="vehicle_ownership" value="Own" checked required>
                                                 <label class="form-check-label">Own</label>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="vehicle_ownership" value="Other">
+                                                <input class="form-check-input" type="radio" name="vehicle_ownership" value="Other" required>
                                                 <label class="form-check-label">Other</label>
                                             </div>
 
@@ -175,7 +175,7 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label class="form-label">🚢 Delivery Mode</label>
-                                                <select name="delivery_mode" class="form-select">
+                                                <select name="delivery_mode" class="form-select" required>
                                                     <option selected>Select Mode</option>
                                                     <option>Road</option>
                                                     <option>Rail</option>
@@ -188,7 +188,7 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label class="form-label">📍 From (Origin)</label>
-                                                <select name="from_location" class="form-select">
+                                                <select name="from_location" class="form-select" required>
                                                     <option selected>Select Origin</option>
                                                     <option>Mumbai</option>
                                                     <option>Delhi</option>
@@ -201,7 +201,7 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label class="form-label">📍 To (Destination)</label>
-                                                <select name="to_location" class="form-select">
+                                                <select name="to_location" class="form-select" required>
                                                     <option selected>Select Destination</option>
                                                     <option>Kolkata</option>
                                                     <option>Hyderabad</option>
@@ -218,11 +218,11 @@
 
                                             <div class="mb-3 d-flex gap-3">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="cargo_description_type" id="singleDoc" value="single" checked>
+                                                        <input class="form-check-input" type="radio" name="cargo_description_type" id="singleDoc" value="single" checked required>
                                                         <label class="form-check-label" for="singleDoc">Single Document</label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="cargo_description_type" id="multipleDoc" value="multiple">
+                                                        <input class="form-check-input" type="radio" name="cargo_description_type" id="multipleDoc" value="multiple" required>
                                                         <label class="form-check-label" for="multipleDoc">Multiple Documents</label>
                                                     </div>
                                             </div>
@@ -248,23 +248,23 @@
                                                     </thead>
                                                     <tbody id="cargoTableBody">
                                                         <tr>
-                                                            <td><input type="number" name="cargo[0][packages_no]" class="form-control" placeholder="0"></td>
+                                                            <td><input type="number" name="cargo[0][packages_no]" class="form-control" placeholder="0" required></td>
                                                             <td>
-                                                                <select name="cargo[0][package_type]" class="form-select">
+                                                                <select name="cargo[0][package_type]" class="form-select" required>
                                                                     <option value="Pallets">Pallets</option>
                                                                     <option value="Cartons">Cartons</option>
                                                                     <option value="Bags">Bags</option>
                                                                 </select>
                                                             </td>
-                                                            <td><input type="text" name="cargo[0][package_description]" class="form-control" placeholder="Enter description"></td>
-                                                            <td><input name="cargo[0][weight]" type="number" class="form-control" placeholder="0"></td>
-                                                            <td><input name="cargo[0][actual_weight]" type="number" class="form-control" placeholder="0"></td>
-                                                            <td><input name="cargo[0][charged_weight]" type="number" class="form-control" placeholder="0"></td>
-                                                            <td><input name="cargo[0][document_no]" type="text" class="form-control" placeholder="Doc No."></td>
-                                                            <td><input name="cargo[0][document_name]" type="text" class="form-control" placeholder="Doc Name"></td>
-                                                            <td><input name="cargo[0][document_date]" type="date" class="form-control"></td>
-                                                            <td><input name="cargo[0][eway_bill]" type="text" class="form-control" placeholder="Eway Bill No."></td>
-                                                            <td><input name="cargo[0][valid_upto]" type="date" class="form-control"></td>
+                                                            <td><input type="text" name="cargo[0][package_description]" class="form-control" placeholder="Enter description" required></td>
+                                                            <td><input name="cargo[0][weight]" type="number" class="form-control" placeholder="0" required></td>
+                                                            <td><input name="cargo[0][actual_weight]" type="number" class="form-control" placeholder="0" required></td>
+                                                            <td><input name="cargo[0][charged_weight]" type="number" class="form-control" placeholder="0" required></td>
+                                                            <td><input name="cargo[0][document_no]" type="text" class="form-control" placeholder="Doc No." required></td>
+                                                            <td><input name="cargo[0][document_name]" type="text" class="form-control" placeholder="Doc Name" required></td>
+                                                            <td><input name="cargo[0][document_date]" type="date" class="form-control" required></td>
+                                                            <td><input name="cargo[0][eway_bill]" type="text" class="form-control" placeholder="Eway Bill No." required></td>
+                                                            <td><input name="cargo[0][valid_upto]" type="date" class="form-control" required></td>
                                                             <td>
                                                                 <button class="btn btn-danger btn-sm" onclick="removeRow(this)">🗑</button>
                                                             </td>
@@ -306,21 +306,21 @@
                                                     <tbody>
                                                         <tr>
                                                             <td><input name="freight_amount" type="number" class="form-control"
-                                                                    placeholder="Enter Freight Amount"></td>
+                                                                    placeholder="Enter Freight Amount" required></td>
                                                             <td><input name="lr_charges" type="number" class="form-control"
-                                                                    placeholder="Enter LR Charges"></td>
+                                                                    placeholder="Enter LR Charges" required></td>
                                                             <td><input name="hamali" type="number" class="form-control"
-                                                                    placeholder="Enter Hamali Charges"></td>
+                                                                    placeholder="Enter Hamali Charges" required></td>
                                                             <td><input name="other_charges" type="number" class="form-control"
-                                                                    placeholder="Enter Other Charges"></td>
+                                                                    placeholder="Enter Other Charges" required></td>
                                                             <td><input name="gst_amount" type="number" class="form-control"
-                                                                    placeholder="Enter GST Amount"></td>
+                                                                    placeholder="Enter GST Amount" required></td>
                                                             <td><input name="total_freight" type="number" class="form-control"
-                                                                    placeholder="Total Freight"></td>
+                                                                    placeholder="Total Freight" required></td>
                                                             <td><input name="less_advance" type="number" class="form-control"
-                                                                    placeholder="Less Advance Amount"></td>
+                                                                    placeholder="Less Advance Amount" required></td>
                                                             <td><input name="balance_freight" type="number" class="form-control"
-                                                                    placeholder="Balance Freight Amount"></td>
+                                                                    placeholder="Balance Freight Amount" required></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -335,7 +335,7 @@
                                             <div class="mb-3">
                                                 <label class="form-label " style="font-weight: bold;">💰 Declared Value
                                                     (Rs.)</label>
-                                                <input type="number" name="declared_value" class="form-control">
+                                                <input type="number" name="declared_value" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>

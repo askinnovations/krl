@@ -23,30 +23,28 @@
       </div>
       <div class="card-body">
          <div class="row">
-            
             <!-- Description -->
             <div class="col-md-3">
                <div class="mb-3">
                   <label class="form-label">📝 Consignment Details</label>
-                  <textarea name="description" class="form-control" rows="2" placeholder="Enter order description"></textarea>
-                    @error('description')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-
+                  <textarea name="description" class="form-control" rows="2" placeholder="Enter order description" required></textarea>
+                  @error('description')
+                  <small class="text-danger">{{ $message }}</small>
+                  @enderror
                </div>
             </div>
             <!-- Order Date -->
             <div class="col-md-3">
                <div class="mb-3">
                   <label class="form-label">📅 Consignment Pickup Date</label>
-                  <input type="date" name="order_date" class="form-control">
+                  <input type="date" name="order_date" class="form-control" required>
                </div>
             </div>
             <!-- Status -->
             <div class="col-md-3">
                <div class="mb-3">
                   <label class="form-label">📊 Status</label>
-                  <select name="status" class="form-select">
+                  <select name="status" class="form-select" required>
                      <option value="">Select Status</option>
                      <option value="Pending">Pending</option>
                      <option value="Processing">Processing</option>
@@ -59,7 +57,7 @@
             <div class="col-md-3">
                <div class="mb-3">
                   <label class="form-label">👤 CUSTOMER NAME</label>
-                  <select name="customer_id" id="customer_id" class="form-select" onchange="setCustomerDetails()">
+                  <select name="customer_id" id="customer_id" class="form-select" onchange="setCustomerDetails()" required>
                      <option value="">Select Customer</option>
                      @foreach($users as $user)
                      @php
@@ -88,21 +86,21 @@
             <div class="col-md-3">
                <div class="mb-3">
                   <label class="form-label">🧾 GST NUMBER</label>
-                  <input type="text" name="gst_number" id="gst_number" class="form-control" readonly>
+                  <input type="text" name="gst_number" id="gst_number" class="form-control" readonly required>
                </div>
             </div>
             <!-- CUSTOMER ADDRESS (Auto-filled) -->
             <div class="col-md-3">
                <div class="mb-3">
                   <label class="form-label">📍 CUSTOMER ADDRESS</label>
-                  <input type="text" name="customer_address" id="customer_address" class="form-control" readonly>
+                  <input type="text" name="customer_address" id="customer_address" class="form-control" readonly required>
                </div>
             </div>
             <!-- ORDER TYPE -->
             <div class="col-md-3">
                <div class="mb-3">
                   <label class="form-label">📊 Order Type</label>
-                  <select name="order_type" class="form-select">
+                  <select name="order_type" class="form-select" required>
                      <option value="">Select Order</option>
                      <option value="Back Date">Back Date</option>
                      <option value="Future">Future</option>
@@ -126,19 +124,16 @@
          </div>
          <!-- Submit Button -->
          <div class="row mt-4 mb-4">
-         <div class="col-12 text-center">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Save Order & LR Details
-            </button>
-        </div>
-
+            <div class="col-12 text-center">
+               <button type="submit" class="btn btn-primary">
+               <i class="fas fa-save"></i> Save Order & LR Details
+               </button>
+            </div>
          </div>
       </div>
    </div>
 </form>
 <!-- JavaScript to Add & Remove LR Consignments -->
-
-
 <script>
    var vehicles = @json($vehicles);
    
@@ -177,14 +172,14 @@
                <div class="row">
                  <!-- Consignor Details -->
                  <div class="col-md-6">
-                 <div class="mb-3">
+                   <div class="mb-3">
                      <label class="form-label">Lr Number</label>
-                     <input type="number" name="lr[${counter}][lr_number]" class="form-control" placeholder="Enter lr number name">
+                     <input type="number" name="lr[${counter}][lr_number]" class="form-control" placeholder="Enter lr number name" required>
                    </div>
                    <h5>📦 Consignor (Sender)</h5>
-                  <select name="lr[${counter}][consignor_id]" id="consignor_id_${counter}" class="form-select" onchange="setConsignorDetails(${counter})">
-  <option value="">Select Consignor Name</option>
-  @foreach($users as $user)
+                  <select name="lr[${counter}][consignor_id]" id="consignor_id_${counter}" class="form-select" onchange="setConsignorDetails(${counter})" required>
+   <option value="">Select Consignor Name</option>
+   @foreach($users as $user)
       @php
           $addresses = json_decode($user->address, true);
           $formattedAddress = '';
@@ -203,31 +198,31 @@
           data-address-consignor="{{ $formattedAddress }}">
           {{ $user->name }}
       </option>
-  @endforeach
-</select>
-
-<div class="mb-3">
-  <label class="form-label">Consignor Loading Address</label>
-  <textarea name="lr[${counter}][consignor_loading]" id="consignor_loading_${counter}" class="form-control" rows="2" placeholder="Enter loading address"></textarea>
-</div>
-
-<div class="mb-3">
-  <label class="form-label">Consignor GST</label>
-  <input type="text" name="lr[${counter}][consignor_gst]" id="consignor_gst_${counter}" class="form-control" placeholder="Enter GST number">
-</div>
-
+   @endforeach
+   </select>
+   
+   <div class="mb-3">
+   <label class="form-label">Consignor Loading Address</label>
+   <textarea name="lr[${counter}][consignor_loading]" id="consignor_loading_${counter}" class="form-control" rows="2" placeholder="Enter loading address" required></textarea>
+   </div>
+   
+   <div class="mb-3">
+   <label class="form-label">Consignor GST</label>
+   <input type="text" name="lr[${counter}][consignor_gst]" id="consignor_gst_${counter}" class="form-control" placeholder="Enter GST number" required>
+   </div>
+   
                  </div>
                  
                  <!-- Consignee Details -->
                  <div class="col-md-6">
                  <div class="mb-3">
                      <label class="form-label">Lr date</label>
-                     <input type="date" name="lr[${counter}][lr_date]" class="form-control" placeholder="Enter lr date">
+                     <input type="date" name="lr[${counter}][lr_date]" class="form-control" placeholder="Enter lr date" required>
                    </div>
                    <h5>📦 Consignee (Receiver)</h5>
-                  <select name="lr[${counter}][consignee_id]" id="consignee_id_${counter}" class="form-select" onchange="setConsigneeDetails(${counter})">
-  <option value="">Select Consignee Name</option>
-  @foreach($users as $user)
+                  <select name="lr[${counter}][consignee_id]" id="consignee_id_${counter}" class="form-select" onchange="setConsigneeDetails(${counter})" required>
+   <option value="">Select Consignee Name</option>
+   @foreach($users as $user)
       @php
           $addresses = json_decode($user->address, true);
           $formattedAddress = '';
@@ -246,19 +241,19 @@
           data-address-consignee="{{ $formattedAddress }}">
           {{ $user->name }}
       </option>
-  @endforeach
-</select>
-
-<div class="mb-3">
-  <label class="form-label">Consignee Unloading Address</label>
-  <textarea name="lr[${counter}][consignee_unloading]" id="consignee_unloading_${counter}" class="form-control" rows="2" placeholder="Enter unloading address"></textarea>
-</div>
-
-<div class="mb-3">
-  <label class="form-label">Consignee GST</label>
-  <input type="text" name="lr[${counter}][consignee_gst]" id="consignee_gst_${counter}" class="form-control" placeholder="Enter GST number">
-</div>
-
+   @endforeach
+   </select>
+   
+   <div class="mb-3">
+   <label class="form-label">Consignee Unloading Address</label>
+   <textarea name="lr[${counter}][consignee_unloading]" id="consignee_unloading_${counter}" class="form-control" rows="2" placeholder="Enter unloading address" required></textarea>
+   </div>
+   
+   <div class="mb-3">
+   <label class="form-label">Consignee GST</label>
+   <input type="text" name="lr[${counter}][consignee_gst]" id="consignee_gst_${counter}" class="form-control" placeholder="Enter GST number" required>
+   </div>
+   
    
                  </div>
                </div>
@@ -268,7 +263,7 @@
                  <div class="col-md-4">
                    <div class="mb-3">
                      <label class="form-label">📅 Vehicle Date</label>
-                     <input type="date" name="lr[${counter}][vehicle_date]" class="form-control">
+                     <input type="date" name="lr[${counter}][vehicle_date]" class="form-control" required>
                    </div>
                  </div>
                  
@@ -276,7 +271,7 @@
                  <div class="col-md-4">
                    <div class="mb-3">
                      <label class="form-label">🚛 Vehicle Type</label>
-                     <select name="lr[${counter}][vehicle_id]" class="form-select">
+                     <select name="lr[${counter}][vehicle_id]" class="form-select" required>
                                        ${generateVehicleOptions()}
                       </select>
                    </div>
@@ -287,11 +282,11 @@
                    <label class="form-label">🛻 Vehicle Ownership</label>
                    <div class="d-flex gap-3">
                      <div class="form-check">
-                       <input class="form-check-input" type="radio" name="lr[${counter}][vehicle_ownership]" value="Own" checked>
+                       <input class="form-check-input" type="radio" name="lr[${counter}][vehicle_ownership]" value="Own" checked required>
                        <label class="form-check-label">Own</label>
                      </div>
                      <div class="form-check">
-                       <input class="form-check-input" type="radio" name="lr[${counter}][vehicle_ownership]" value="Other">
+                       <input class="form-check-input" type="radio" name="lr[${counter}][vehicle_ownership]" value="Other" required>
                        <label class="form-check-label">Other</label>
                      </div>
                    </div>
@@ -303,7 +298,7 @@
                  <div class="col-md-4">
                    <div class="mb-3">
                      <label class="form-label">🚢 Delivery Mode</label>
-                     <select name="lr[${counter}][delivery_mode]" class="form-select">
+                     <select name="lr[${counter}][delivery_mode]" class="form-select" required>
                        <option value="">Select Mode</option>
                        <option value="Road">Road</option>
                        <option value="Rail">Rail</option>
@@ -316,7 +311,7 @@
                  <div class="col-md-4">
                    <div class="mb-3">
                      <label class="form-label">📍 From (Origin)</label>
-                     <select name="lr[${counter}][from_location]" class="form-select">
+                     <select name="lr[${counter}][from_location]" class="form-select" required>
                        <option value="">Select Origin</option>
                        <option value="Mumbai">Mumbai</option>
                        <option value="Delhi">Delhi</option>
@@ -329,7 +324,7 @@
                  <div class="col-md-4">
                    <div class="mb-3">
                      <label class="form-label">📍 To (Destination)</label>
-                     <select name="lr[${counter}][to_location]" class="form-select">
+                     <select name="lr[${counter}][to_location]" class="form-select" required>
                        <option value="">Select Destination</option>
                        <option value="Kolkata">Kolkata</option>
                        <option value="Hyderabad">Hyderabad</option>
@@ -347,11 +342,11 @@
                          <!-- Documentation Selection -->
                          <div class="mb-3 d-flex gap-3">
                                  <div class="form-check">
-                                     <input class="form-check-input" type="radio" name="cargo_description_type" id="singleDoc" value="single" checked>
+                                     <input class="form-check-input" type="radio" name="cargo_description_type" id="singleDoc" value="single" checked required>
                                      <label class="form-check-label" for="singleDoc">Single Document</label>
                                  </div>
                                  <div class="form-check">
-                                     <input class="form-check-input" type="radio" name="cargo_description_type" id="multipleDoc" value="multiple">
+                                     <input class="form-check-input" type="radio" name="cargo_description_type" id="multipleDoc" value="multiple" required>
                                      <label class="form-check-label" for="multipleDoc">Multiple Documents</label>
                                  </div>
                              </div>
@@ -375,42 +370,42 @@
                                              <th>Action</th>
                                          </tr>
                                      </thead>
-                                     <tbody id="cargoTableBody">
+                                     <tbody id="cargoTableBody-${counter}">
                                           <tr>
-                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][packages_no]" placeholder="0"></td>
+                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][packages_no]" placeholder="0" required></td>
                                               <td>
-                                                  <select class="form-select" name="lr[${counter}][cargo][0][package_type]">
+                                                  <select class="form-select" name="lr[${counter}][cargo][0][package_type]" required>
                                                       <option>Pallets</option>
                                                       <option>Cartons</option>
                                                       <option>Bags</option>
                                                   </select>
                                               </td>
-                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][package_description]" placeholder="Enter description"></td>
-                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][weight]" placeholder="0"></td>
-                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][actual_weight]" placeholder="0"></td>
-                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][charged_weight]" placeholder="0"></td>
-                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][document_no]" placeholder="Doc No."></td>
-                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][document_name]" placeholder="Doc Name"></td>
-                                              <td><input type="date" class="form-control" name="lr[${counter}][cargo][0][document_date]"></td>
-                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][eway_bill]" placeholder="Eway Bill No."></td>
-                                              <td><input type="date" class="form-control" name="lr[${counter}][cargo][0][valid_upto]"></td>
+                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][package_description]" placeholder="Enter description" required></td>
+                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][weight]" placeholder="0" required></td>
+                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][actual_weight]" placeholder="0" required></td>
+                                              <td><input type="number" class="form-control" name="lr[${counter}][cargo][0][charged_weight]" placeholder="0" required></td>
+                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][document_no]" placeholder="Doc No." required></td>
+                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][document_name]" placeholder="Doc Name" required></td>
+                                              <td><input type="date" class="form-control" name="lr[${counter}][cargo][0][document_date]" required></td>
+                                              <td><input type="text" class="form-control" name="lr[${counter}][cargo][0][eway_bill]" placeholder="Eway Bill No." required></td>
+                                              <td><input type="date" class="form-control" name="lr[${counter}][cargo][0][valid_upto]" required></td>
                                               <td>
                                                   <button class="btn btn-danger btn-sm" onclick="removeRow(this)">🗑</button>
                                               </td>
                                           </tr>
                                       </tbody>
-
+   
                                  </table>
                              </div>
                          <!-- Add Row Button -->
                        <div class="text-end mt-2">
                              <button type="button" class="btn btn-sm" style="background: #ca2639; color: white;"
-                     onclick="addRow()">
+                     onclick="addRow(${counter})">
                      <span style="filter: invert(1);">➕</span> Add Row</button>
                       </div>
                     </div>
                 </div>
-
+   
     <!-- Freight Details Section -->
                <div class="row mt-4">
                  <div class="col-12">
@@ -432,28 +427,28 @@
                        <tbody>
                          <tr>
                            <td>
-                             <input type="number" name="lr[${counter}][freight_amount]" class="form-control" placeholder="Enter Freight Amount">
+                             <input type="number" name="lr[${counter}][freight_amount]" class="form-control" placeholder="Enter Freight Amount" required>
                            </td>
                            <td>
-                             <input type="number" name="lr[${counter}][lr_charges]" class="form-control" placeholder="Enter LR Charges">
+                             <input type="number" name="lr[${counter}][lr_charges]" class="form-control" placeholder="Enter LR Charges" required>
                            </td>
                            <td>
-                             <input type="number" name="lr[${counter}][hamali]" class="form-control" placeholder="Enter Hamali Charges">
+                             <input type="number" name="lr[${counter}][hamali]" class="form-control" placeholder="Enter Hamali Charges" required>
                            </td>
                            <td>
-                             <input type="number" name="lr[${counter}][other_charges]" class="form-control" placeholder="Enter Other Charges">
+                             <input type="number" name="lr[${counter}][other_charges]" class="form-control" placeholder="Enter Other Charges" required>
                            </td>
                            <td>
-                             <input type="number" name="lr[${counter}][gst_amount]" class="form-control" placeholder="Enter GST Amount">
+                             <input type="number" name="lr[${counter}][gst_amount]" class="form-control" placeholder="Enter GST Amount" required>
                            </td>
                            <td>
-                             <input type="number" name="lr[${counter}][total_freight]" class="form-control" placeholder="Total Freight">
+                             <input type="number" name="lr[${counter}][total_freight]" class="form-control" placeholder="Total Freight" required>
                            </td>
                            <td>
-                             <input type="number" name="lr[${counter}][less_advance]" class="form-control" placeholder="Less Advance Amount">
+                             <input type="number" name="lr[${counter}][less_advance]" class="form-control" placeholder="Less Advance Amount" required>
                            </td>
                            <td>
-                             <input type="number" name="lr[${counter}][balance_freight]" class="form-control" placeholder="Balance Freight Amount">
+                             <input type="number" name="lr[${counter}][balance_freight]" class="form-control" placeholder="Balance Freight Amount" required>
                            </td>
                          </tr>
                        </tbody>
@@ -467,7 +462,7 @@
                  <div class="col-md-6">
                    <div class="mb-3">
                      <label class="form-label" style="font-weight: bold;">💰 Declared Value (Rs.)</label>
-                     <input type="number" name="lr[${counter}][declared_value]" class="form-control">
+                     <input type="number" name="lr[${counter}][declared_value]" class="form-control" required>
                    </div>
                  </div>
                </div>
@@ -516,29 +511,27 @@
    });
 </script>
 <script>
-   function addRow() {
-    let table = document.getElementById('cargoTableBody');
-    let rowCount = table.rows.length;
+   function addRow(lrIndex) {
+      const tableBody = document.getElementById(`cargoTableBody-${lrIndex}`);
+      const rowCount = tableBody.rows.length;
+      const newRow = tableBody.rows[0].cloneNode(true);
 
-    let newRow = table.rows[0].cloneNode(true);
+      [...newRow.querySelectorAll('input, select')].forEach((input) => {
+         if (input.name) {
+            input.name = input.name.replace(/lr\[\d+]\[cargo]\[\d+]/, `lr[${lrIndex}][cargo][${rowCount}]`);
+            input.value = '';
+         }
+      });
 
-    [...newRow.querySelectorAll('input, select')].forEach(function (input) {
-        if (input.name) {
-            // Match the full pattern: lr[<num>][cargo][<num>][field]
-            input.name = input.name.replace(/(lr\[\d+]\[cargo])\[\d+]/, `$1[${rowCount}]`);
-            input.value = ''; // Clear value
-        }
-    });
-
-    table.appendChild(newRow);
-}
+      tableBody.appendChild(newRow);
+   }
 
    function removeRow(button) {
-       let table = document.getElementById('cargoTableBody');
-       let row = button.closest('tr');
-       if (table.rows.length > 1) {
-           row.remove();
-       }
+      const row = button.closest('tr');
+      const tbody = row.parentElement;
+      if (tbody.rows.length > 1) {
+         row.remove();
+      }
    }
 </script>
 <script>
@@ -552,34 +545,29 @@
    }
 </script>
 <script>
-  function setConsignorDetails(counter) {
-      const selected = document.getElementById(`consignor_id_${counter}`);
-      const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignor');
-      const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignor');
-
-      document.getElementById(`consignor_gst_${counter}`).value = gst || '';
-      document.getElementById(`consignor_loading_${counter}`).value = address || '';
-  }
+   function setConsignorDetails(counter) {
+       const selected = document.getElementById(`consignor_id_${counter}`);
+       const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignor');
+       const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignor');
+   
+       document.getElementById(`consignor_gst_${counter}`).value = gst || '';
+       document.getElementById(`consignor_loading_${counter}`).value = address || '';
+   }
 </script>
-
 <script>
-  function setConsigneeDetails(counter) {
-      const selected = document.getElementById(`consignee_id_${counter}`);
-      const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignee');
-      const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignee');
-
-      document.getElementById(`consignee_gst_${counter}`).value = gst || '';
-      document.getElementById(`consignee_unloading_${counter}`).value = address || '';
-  }
+   function setConsigneeDetails(counter) {
+       const selected = document.getElementById(`consignee_id_${counter}`);
+       const gst = selected.options[selected.selectedIndex].getAttribute('data-gst-consignee');
+       const address = selected.options[selected.selectedIndex].getAttribute('data-address-consignee');
+   
+       document.getElementById(`consignee_gst_${counter}`).value = gst || '';
+       document.getElementById(`consignee_unloading_${counter}`).value = address || '';
+   }
 </script>
 <!-- jQuery (required first) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
 <!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-
 @endsection
