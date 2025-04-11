@@ -40,16 +40,23 @@ class FreightBillController extends Controller
     }
     
 
-    public function show($order_id)
-    { 
-        $order = Order::with(['customer', 'consignor', 'consignee'])->where('order_id', $order_id)->firstOrFail();
-        // dd($order);
-        $vehicles = Vehicle::all();
-        $users = User::all();
+    public function show(Request $request)
+{
+    $lrNumbers = $request->input('lr'); // e.g., ["77", "45674", "123456"]
 
-        return view('admin.freight-bill.view', compact('order','vehicles','users'));
-    }
+    $orders = DB::table('orders')
+        ->where(function ($query) use ($lrNumbers) {
+            foreach ($lrNumbers as $lr) {
+                $query->orWhereRaw("JSON_SEARCH(lr, 'all', ?) IS NOT NULL", [$lr]);
+            }
+        })
+        ->get();
+        // return $orders;
 
+        return view('admin.freight-bill.view', compact('orders'));
+}
+    
+    
     
 
     public function update(Request $request, $id)

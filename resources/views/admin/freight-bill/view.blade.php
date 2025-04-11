@@ -182,9 +182,7 @@
 
 <body>
 
-@php
-    $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-@endphp
+
 
   <div class="container">
     <div class="title">FREIGHT BILL – SINGLE LR OR MULTIPLE LR</div>
@@ -204,57 +202,65 @@
     <div class="section">
   <div class="box half-box">
     <strong>From:</strong><br>
-    @foreach($lrDetails as $lr)
-       {{ $lr['from_location'] ?? '-' }}<br>
-    @endforeach
+    
+      
   </div>
   
   <div class="box half-box">
     <strong>To:</strong><br>
-    @foreach($lrDetails as $lr)
-       {{ $lr['to_location'] ?? '-' }}<br>
-    @endforeach
+   
   </div>
 </div>
 
     
 
-    <table>
-      <thead>
+<table>
+    <thead>
         <tr>
-          <th>S. No.</th>
-          <th>LR No.</th>
-          <th>LR Date</th>
-          <th>Particulars</th>
-          <th>Freight Type</th>
-          <th>Weight / Quantity</th>
-          <th>Rate</th>
-          <th>Amount</th>
+            <th>S. No.</th>
+            <th>LR No.</th>
+            <th>LR Date</th>
+            <th>Particulars</th>
+            <th>Freight Type</th>
+            <th>Weight / Quantity</th>
+            <th>Rate</th>
+            <th>Amount</th>
         </tr>
-      </thead>
-      <tbody>
+    </thead>
+    <tbody>
+  
     
-      
+    
+   
+    @php $count = 1; @endphp
 
-@foreach($lrDetails as $index => $lr)
-<tr>
-    <td>{{ $loop->iteration }}</td>
-    <td>{{ $lr['lr_number'] ?? '-' }}</td>
-    <td>{{ $lr['lr_date'] ?? '-' }}</td>
-    <td>{{ $lr['freight_amount'] ?? '-' }}</td>
-    <td>{{ $lr['cargo'][0]['weight'] ?? '-' }}</td>
-    <td>{{ $lr['cargo'][0]['charged_weight'] ?? '-' }}</td>
-    <td>{{ $lr['total_freight'] ?? '-' }}</td>
-    <td>-</td>
-</tr>
+@foreach($orders as $order)
+    @php
+        $decodedLrs = json_decode($order->lr, true);
+        $requestedLrs = request()->input('lr', []);
+    @endphp
+
+    @if(is_array($decodedLrs))
+        @foreach($decodedLrs as $entry)
+            @if(isset($entry['lr_number']) && in_array($entry['lr_number'], $requestedLrs))
+                <tr>
+                    <td>{{ $count++ }}</td>
+                    <td>{{ $entry['lr_number'] }}</td>
+                    <td>{{ $entry['lr_date'] }}</td>
+                    <td>{{ $entry['cargo'][0]['package_description'] ?? '-' }}</td>
+                    <td>{{ $order->freight_type ?? '-' }}</td>
+                    <td>{{ $entry['cargo'][0]['weight'] ?? '-' }}</td>
+                    <td>{{ $entry['rate'] ?? '-' }}</td>
+                    <td>{{ $entry['amount'] ?? '-' }}</td>
+                </tr>
+            @endif
+        @endforeach
+    @endif
 @endforeach
 
- 
 
-
-        
-      </tbody>
-    </table>
+    </tbody>
+</table>
 
     <div class="total-in-words">
       Total in Words: ____________________________________________

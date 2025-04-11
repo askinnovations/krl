@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Vehicle;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 
 class ConsignmentNoteController extends Controller
 {
@@ -184,14 +186,30 @@ class ConsignmentNoteController extends Controller
 
 
 
-    public function show($order_id)
-    {
-        
-        $order = Order::with(['customer', 'consignor', 'consignee'])->where('order_id', $order_id)->firstOrFail();
-        $vehicles = Vehicle::all();
-        $users = User::all();
-        return view('admin.consignments.view', compact('order','vehicles','users'));
+public function show($id)
+{
+    $orders = DB::table('orders')->get();
+
+    foreach ($orders as $order) {
+        $lrData = json_decode($order->lr, true);
+
+        foreach ($lrData as $entry) {
+            if (isset($entry['lr_number']) && $entry['lr_number'] == $id) {
+                $lrEntries = $entry;
+                $vehicles = \App\Models\Vehicle::all();
+                $users = \App\Models\User::all();
+                // return ($lrEntries);
+                return view('admin.consignments.view', compact('orders', 'order', 'lrEntries', 'vehicles', 'users'));
+            }
+        }
     }
+
+    return redirect()->back()->with('error', 'LR Number not found.');
+}
+
+
+
+
 
 
     public function edit($order_id)

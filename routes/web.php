@@ -63,7 +63,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/create', [ConsignmentNoteController::class, 'create'])->name('admin.consignments.create');
         Route::post('/store', [ConsignmentNoteController::class, 'store'])->name('admin.consignments.store');
         Route::get('/edit/{order_id}', [ConsignmentNoteController::class, 'edit'])->name('admin.consignments.edit');
-        Route::get('/view/{order_id}', [ConsignmentNoteController::class, 'show'])->name('admin.consignments.view');
+        Route::get('/view/{id}', [ConsignmentNoteController::class, 'show'])->name('admin.consignments.view');
         Route::post('/update/{order_id}', [ConsignmentNoteController::class, 'update'])->name('admin.consignments.update');
         Route::delete('/delete/{order_id}', [ConsignmentNoteController::class, 'destroy'])->name('admin.consignments.delete');
     });
@@ -73,7 +73,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [FreightBillController::class, 'index'])->name('admin.freight-bill.index');
         Route::get('/create', [FreightBillController::class, 'create'])->name('admin.freight-bill.create');
         Route::post('/store', [FreightBillController::class, 'store'])->name('admin.freight-bill.store');
-        Route::get('/view/{order_id}', [FreightBillController::class, 'show'])->name('admin.freight-bill.view');
+        // Route::get('/view/{order_id}', [FreightBillController::class, 'show'])->name('admin.freight-bill.view');
+        Route::post('/view', [FreightBillController::class, 'show'])->name('admin.freight-bill.view');
+
         Route::get('/edit/{order_id}', [FreightBillController::class, 'edit'])->name('admin.freight-bill.edit');
         Route::post('/update/{order_id}', [FreightBillController::class, 'update'])->name('admin.freight-bill.update');
         Route::delete('/delete/{order_id}', [FreightBillController::class, 'destroy'])->name('admin.freight-bill.delete');

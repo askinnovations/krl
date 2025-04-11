@@ -350,40 +350,44 @@
                 </div>
 
                 <div>
-                    <table class="consignor-consignee-table">
-                    <tr>
-  <td>
-    <div class="section-heading">CONSIGNOR'S NAME & ADDRESS</div>
+                @php
+    if (!function_exists('cleanAddress')) {
+        function cleanAddress($address) {
+            $clean = preg_replace('/(Address:\s*)+/i', '', $address);
+            $clean = preg_replace('/,+/', ',', $clean);
+            return trim($clean, ', ');
+        }
+    }
 
-    @foreach($lrDetails as $lr)
-      @php
-        $consignorUser = \App\Models\User::find($lr['consignor_id'] ?? null);
-        $consignorName = $consignorUser->name ?? '-';
-      @endphp
-      <div class="address-line">• {{ $consignorName }}</div>
-      <div class="address-line">{{ $lr['consignor_loading'] ?? '-' }}</div>
-      <div class="address-line">GSTIN - {{ $lr['consignor_gst'] ?? '-' }}</div>
-      <br>
-    @endforeach
-  </td>
+    $lr = $lrEntries; // a single LR entry
+    $consignorUser = \App\Models\User::find($lr['consignor_id'] ?? null);
+    $consigneeUser = \App\Models\User::find($lr['consignee_id'] ?? null);
+@endphp
 
-  <td>
-    <div class="section-heading">CONSIGNEE'S NAME & ADDRESS</div>
+<table class="consignor-consignee-table">
+    <tr>
+        {{-- CONSIGNOR --}}
+        <td>
+            <div class="section-heading">CONSIGNOR'S NAME & ADDRESS</div>
+            <div class="address-line">• {{ $consignorUser->name ?? '-' }}</div>
+            <div class="address-line">
+                {{ isset($lr['consignor_loading']) ? cleanAddress($lr['consignor_loading']) : '-' }}
+            </div>
+            <div class="address-line">GSTIN - {{ $lr['consignor_gst'] ?? '-' }}</div>
+        </td>
 
-    @foreach($lrDetails as $lr)
-      @php
-        $consigneeUser = \App\Models\User::find($lr['consignee_id'] ?? null);
-        $consigneeName = $consigneeUser->name ?? '-';
-      @endphp
-      <div class="address-line">• {{ $consigneeName }}</div>
-      <div class="address-line">{{ $lr['consignee_unloading'] ?? '-' }}</div>
-      <div class="address-line">GSTIN - {{ $lr['consignee_gst'] ?? '-' }}</div>
-      <br>
-    @endforeach
-  </td>
-</tr>
+        {{-- CONSIGNEE --}}
+        <td>
+            <div class="section-heading">CONSIGNEE'S NAME & ADDRESS</div>
+            <div class="address-line">• {{ $consigneeUser->name ?? '-' }}</div>
+            <div class="address-line">
+                {{ isset($lr['consignee_unloading']) ? cleanAddress($lr['consignee_unloading']) : '-' }}
+            </div>
+            <div class="address-line">GSTIN - {{ $lr['consignee_gst'] ?? '-' }}</div>
+        </td>
+    </tr>
+</table>
 
-                      </table>
                     
                 </div>
 
@@ -461,11 +465,13 @@
     $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
 @endphp
 
-@foreach($lrDetails as $index => $lr)
-    <p style="margin-top: 10px;">
-        <strong>Declared Value Rs.</strong> {{ $lr['declared_value'] ?? '-' }}
-    </p>
-@endforeach
+@php
+    $lr = $lrEntries; // Single LR Entry already set from controller
+@endphp
+
+<p style="margin-top: 10px;">
+    <strong>Declared Value Rs.</strong> {{ $lr['declared_value'] ?? '-' }}
+</p>
 
 </div>
 
@@ -474,55 +480,56 @@
             <div class="freight-section">
                 <div class="right-header">
                 @php
-    $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
+    // Use single LR entry directly
+    $lr = $lrEntries;
+
+    // Find vehicle details
+    $vehicle = collect($vehicles)->firstWhere('id', $lr['vehicle_id'] ?? null);
 @endphp
 
-@foreach($lrDetails as $lr)
-    <p><strong>L.R. No:</strong> {{ $lr['lr_number'] ?? '-' }}</p>
-    <p class="date" style="font-size: 16px;">
-        <strong>Dated:</strong> {{ $lr['lr_date'] ?? '-' }}
-    </p>
+<p><strong>L.R. No:</strong> {{ $lr['lr_number'] ?? '-' }}</p>
 
-    @php
-        $vehicle = collect($vehicles)->firstWhere('id', $lr['vehicle_id'] ?? null);
-    @endphp
+<p class="date" style="font-size: 16px;">
+    <strong>Dated:</strong> {{ $lr['lr_date'] ?? '-' }}
+</p>
 
-    <p><strong>Vehicle:</strong> {{ $vehicle->vehicle_no ?? 'N/A' }}</p>
-    <p><strong>Vehicle Type:</strong> {{ $vehicle->vehicle_type ?? 'N/A' }}</p>
-    <p><strong>Delivery Mode:</strong> {{ $lr['delivery_mode'] ?? 'N/A' }}</p>
-    <p><strong>From:</strong> {{ $lr['from_location'] ?? '-' }}</p>
-    <p><strong>To:</strong> {{ $lr['to_location'] ?? '-' }}</p>
-    <hr>
-@endforeach
+<p><strong>Vehicle:</strong> {{ $vehicle->vehicle_no ?? 'N/A' }}</p>
+
+<p><strong>Vehicle Type:</strong> {{ $vehicle->vehicle_type ?? 'N/A' }}</p>
+
+<p><strong>Delivery Mode:</strong> {{ $lr['delivery_mode'] ?? 'N/A' }}</p>
+
+<p><strong>From:</strong> {{ $lr['from_location'] ?? '-' }}</p>
+
+<p><strong>To:</strong> {{ $lr['to_location'] ?? '-' }}</p>
+
+<hr>
+
+
 
                 </div>
                 <div class="freight-box">
                 <h4>FREIGHT</h4>
 
-@php
-    $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
+                @php
+    $lr = $lrEntries; // Already a single LR entry
 @endphp
 
-@foreach($lrDetails as $index => $lr)
-    <div class="section">
-        <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'PAID' ? 'checked' : '' }}> PAID</label>
-        <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'TO PAY' ? 'checked' : '' }}> TO PAY</label>
-        <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'TO BE BILLED' ? 'checked' : '' }}> TO BE BILLED</label>
-    </div>
+<div class="section">
+    <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'PAID' ? 'checked' : '' }}> PAID</label>
+    <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'TO PAY' ? 'checked' : '' }}> TO PAY</label>
+    <label><input type="checkbox" {{ ($lr['freight_type'] ?? '') == 'TO BE BILLED' ? 'checked' : '' }}> TO BE BILLED</label>
+</div>
 
-    <div class="section"><span>FREIGHT</span> <span>{{ $lr['freight_amount'] ?? '-' }}</span></div>
-    <div class="section"><span>LR CHARGES</span> <span>{{ $lr['lr_charges'] ?? '-' }}</span></div>
-    <div class="section"><span>HAMALI</span> <span>{{ $lr['hamali'] ?? '-' }}</span></div>
-    <div class="section"><span>OTHER CHARGES</span> <span>{{ $lr['other_charges'] ?? '-' }}</span></div>
-    <div class="section"><span>GST</span> <span>{{ $lr['gst_amount'] ?? '-' }}</span></div>
-    <div class="section"><span>TOTAL FREIGHT</span> <span>{{ $lr['total_freight'] ?? '-' }}</span></div>
-    <div class="section"><span>LESS ADVANCE</span> <span>{{ $lr['less_advance'] ?? '-' }}</span></div>
-    <div class="section"><span>BALANCE FREIGHT</span> <span>{{ $lr['balance_freight'] ?? '-' }}</span></div>
+<div class="section"><span>FREIGHT</span> <span>{{ $lr['freight_amount'] ?? '-' }}</span></div>
+<div class="section"><span>LR CHARGES</span> <span>{{ $lr['lr_charges'] ?? '-' }}</span></div>
+<div class="section"><span>HAMALI</span> <span>{{ $lr['hamali'] ?? '-' }}</span></div>
+<div class="section"><span>OTHER CHARGES</span> <span>{{ $lr['other_charges'] ?? '-' }}</span></div>
+<div class="section"><span>GST</span> <span>{{ $lr['gst_amount'] ?? '-' }}</span></div>
+<div class="section"><span>TOTAL FREIGHT</span> <span>{{ $lr['total_freight'] ?? '-' }}</span></div>
+<div class="section"><span>LESS ADVANCE</span> <span>{{ $lr['less_advance'] ?? '-' }}</span></div>
+<div class="section"><span>BALANCE FREIGHT</span> <span>{{ $lr['balance_freight'] ?? '-' }}</span></div>
 
-    @if (!$loop->last)
-        <hr>
-    @endif
-@endforeach
 
                 </div>
             </div>
