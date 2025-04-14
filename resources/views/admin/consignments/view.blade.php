@@ -297,9 +297,9 @@
 </head>
 
 <body>
-@php
+<!-- @php
     $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-@endphp
+@endphp -->
     <div class="container">
         <div class="header-section">
             <div class="bill-section">
@@ -405,35 +405,22 @@
         </tr>
     </thead>
     <tbody>
+    
+    @foreach($lrEntries['cargo'] as $cargo)
     @php
-    function toArray($value) {
-        return is_array($value) ? $value : json_decode($value, true);
-    }
-
-    $lrDetails = toArray($order->lr ?? []);
-@endphp
-
-@foreach($lrDetails as $lr)
-    @php
-        $cargos = toArray($lr['cargo'] ?? []);
+        // Check if at least one field is filled
+        $isValid = !empty($cargo['packages_no']) || !empty($cargo['package_type']) || !empty($cargo['package_description']) || !empty($cargo['actual_weight']) || !empty($cargo['charged_weight']);
     @endphp
 
-    @foreach($cargos as $cargo)
-        @php
-            // Check if at least one field is filled
-            $isValid = !empty($cargo['packages_no']) || !empty($cargo['package_type']) || !empty($cargo['package_description']) || !empty($cargo['actual_weight']) || !empty($cargo['charged_weight']);
-        @endphp
-
-        @if($isValid)
-            <tr>
-                <td>{{ $cargo['packages_no'] ?? '' }}</td>
-                <td>{{ $cargo['package_type'] ?? '' }}</td>
-                <td>{{ $cargo['package_description'] ?? '' }}</td>
-                <td>{{ $cargo['actual_weight'] ?? '' }}</td>
-                <td>{{ $cargo['charged_weight'] ?? '' }}</td>
-            </tr>
-        @endif
-    @endforeach
+    @if($isValid)
+        <tr>
+            <td>{{ $cargo['packages_no'] ?? '' }}</td>
+            <td>{{ $cargo['package_type'] ?? '' }}</td>
+            <td>{{ $cargo['package_description'] ?? '' }}</td>
+            <td>{{ $cargo['actual_weight'] ?? '' }}</td>
+            <td>{{ $cargo['charged_weight'] ?? '' }}</td>
+        </tr>
+    @endif
 @endforeach
 
 </tbody>

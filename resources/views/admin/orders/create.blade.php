@@ -172,10 +172,9 @@
                <div class="row">
                  <!-- Consignor Details -->
                  <div class="col-md-6">
-                   <div class="mb-3">
-                     <label class="form-label">Lr Number</label>
-                     <input type="number" name="lr[${counter}][lr_number]" class="form-control" placeholder="Enter lr number name" required>
-                   </div>
+                 
+                   
+
                    <h5>📦 Consignor (Sender)</h5>
                   <select name="lr[${counter}][consignor_id]" id="consignor_id_${counter}" class="form-select" onchange="setConsignorDetails(${counter})" required>
    <option value="">Select Consignor Name</option>

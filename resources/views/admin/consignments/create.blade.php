@@ -37,11 +37,11 @@
                                     <div class="row">
                                         <!-- Consignor Details -->
                                         <div class="col-md-6">
-                                            <div class="mb-3">
+                                            <!-- <div class="mb-3">
                                                 <label class="form-label">Lr Number</label>
                                                 <input type="text" name="lr_number"class="form-control"
                                                     placeholder="Enter lr number" required>
-                                            </div>
+                                            </div> -->
                                             <h5>📦 Consignor (Sender)</h5>
                                             
                                             <select name="consignor_id" id="consignor_id" class="form-select" onchange="setConsignorDetails()" required>

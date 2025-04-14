@@ -40,22 +40,36 @@ class FreightBillController extends Controller
     }
     
 
-    public function show(Request $request)
-{
-    $lrNumbers = $request->input('lr'); // e.g., ["77", "45674", "123456"]
-
-    $orders = DB::table('orders')
-        ->where(function ($query) use ($lrNumbers) {
-            foreach ($lrNumbers as $lr) {
-                $query->orWhereRaw("JSON_SEARCH(lr, 'all', ?) IS NOT NULL", [$lr]);
-            }
-        })
-        ->get();
-        // return $orders;
-
-        return view('admin.freight-bill.view', compact('orders'));
-}
+    public function show($id)
+    {
+        $orders = DB::table('orders')->get();
     
+        foreach ($orders as $order) {
+            $lrData = json_decode($order->lr, true);
+    
+           
+            if (!is_array($lrData)) {
+                $lrData = json_decode(json_decode($order->lr), true);
+            }
+    
+            // dd($lrData); 
+    
+            if (is_array($lrData)) {
+                foreach ($lrData as $entry) {
+                    if (isset($entry['lr_number']) && $entry['lr_number'] == $id) {
+                        $lrEntries = $entry;
+    
+                        $vehicles = \App\Models\Vehicle::all();
+                        $users = \App\Models\User::all();
+    
+                        return view('admin.freight-bill.view', compact('orders', 'order', 'lrEntries', 'vehicles', 'users'));
+                    }
+                }
+            }
+        }
+    
+        return redirect()->back()->with('error', 'LR Number not found.');
+    }
     
     
 

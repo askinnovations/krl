@@ -106,7 +106,7 @@
 
             {{-- Action --}}
             <td>
-                <a href="{{ route('admin.freight-bill.view', $order->order_id) }}" class="btn btn-sm btn-light view-btn">
+                <a <a href="#"  class="btn btn-sm btn-light view-btn">
                     <i class="fas fa-eye text-primary"></i>
                 </a>
 

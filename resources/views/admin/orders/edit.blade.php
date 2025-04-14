@@ -95,24 +95,33 @@
          @php
          $lrData = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
          @endphp
+         <div id="lrContainer">
          @foreach($lrData as $index => $lr)
-         <div class="row mt-4" id="lr-section">
+
+         <div class="row mt-4" >
             <h4 style="margin-bottom: 2%;">🚚 Update LR - Consignment Details</h4>
             <div class="row g-3 mb-3 single-lr-row">
-               <div class="col-md-3">
-                  <label class="form-label">Lr Number</label>
-                  <input required
-                     type="number" 
-                     name="lr_number" 
-                     class="form-control" 
-                     placeholder="Enter lr number" 
-                     value="{{ $lr['lr_number'] ?? '' }}">
-               </div>
+            <div class="col-md-3">
+               <label class="form-label">LR Number</label>
+               <input 
+                    type="text" 
+                    class="form-control" 
+                    value="{{ $lr['lr_number'] ?? '' }}" 
+                    disabled>
+
+                <!-- Hidden field to submit the lr_number -->
+                <input 
+                    type="hidden" 
+                    name="lr[{{ $index }}][lr_number]" 
+                    value="{{ $lr['lr_number'] ?? '' }}">
+            </div>
+
                <div class="col-md-3">
                   <label class="form-label">Lr Date</label>
                   <input required
                      type="date" 
-                     name="lr_date" 
+                     
+                     name="lr[{{ $index  }}][lr_date]" 
                      class="form-control" 
                      placeholder="Enter lr number" 
                      value="{{ $lr['lr_date'] ?? '' }}">
@@ -223,7 +232,9 @@
                <div class="col-md-4">
                   <div class="mb-3">
                      <label class="form-label">📅 Vehicle Date</label>
-                     <input type="date" name="lr[${counter}][vehicle_date]" class="form-control" value="{{ $lr['vehicle_date'] ?? '' }}" required>
+                     <input type="date" name="lr[{{ $index }}][vehicle_date]" class="form-control" value="{{ $lr['vehicle_date'] ?? '' }}" required>
+
+                     <!-- <input type="date" name="lr[${counter}][vehicle_date]" class="form-control" value="{{ $lr['vehicle_date'] ?? '' }}" required> -->
                   </div>
                </div>
                <!-- Vehicle Type (Vehicle ID from vehicles table) -->
@@ -426,11 +437,15 @@
                      </div>
                   </div>
                </div>
-               <!-- Remove / Add More LR Buttons -->
+               
+            </div>
+         </div>
+         <!-- lr -->
+         @endforeach
+         </div>
+         <!-- Remove / Add More LR Buttons -->
                <div class="d-flex justify-content-end gap-2 mt-3">
-                  <button type="button" class="btn btn-outline-warning btn-sm removeLRBtn" data-id="lrItem${counter}" onclick="removeLrRow(this)">
-                  <i class="fas fa-trash-alt"></i> Remove
-                  </button>
+                  
                   <button type="button" class="btn btn-sm addMoreLRBtn" data-id="lrItem${counter}" style="background-color: #ca2639; color: #fff;" onclick="addLrRow()">
                   <i class="fas fa-plus-circle"></i> Add More LR - Consignment
                   </button>
@@ -445,11 +460,7 @@
                      </div>
                   </div>
                </div>
-            </div>
-         </div>
-         <!-- lr -->
-         @endforeach
-         <div id="lr-container"></div>
+         
       </div>
    </div>
 </form>
@@ -532,390 +543,7 @@
        return options;
    }
 </script>
-<!-- add more lr  -->
-<script>
-   function addLrRow() {
-    // Get the current count of LR sections
-    const lrSections = document.querySelectorAll('#lr-section');
-    const counter = lrSections.length;
-    
-    // Create a new LR section with the same HTML structure
-    const newLrSection = document.createElement('div');
-    newLrSection.className = 'row mt-4';
-    newLrSection.id = 'lr-section';
-    
-    // Set the HTML content with updated counter values
-    newLrSection.innerHTML = `
-        <h4 style="margin-bottom: 2%;">🚚 Update LR - Consignment Details</h4>
-        <div class="row g-3 mb-3 single-lr-row">
-            <div class="col-md-3">
-                <label class="form-label">Lr Number</label>
-                <input 
-                    type="number" 
-                    name="lr[${counter}][lr_number]" 
-                    class="form-control" 
-                    placeholder="Enter lr number" required>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Lr Date</label>
-                <input 
-                    type="date" 
-                    name="lr[${counter}][lr_date]" 
-                    class="form-control" 
-                    placeholder="Enter lr number" required>
-            </div>
-            <!-- Consignor Name -->
-            <div class="col-md-3">
-                <label class="form-label">🚚 Consignor Name</label>
-                <select name="lr[${counter}][consignor_id]" class="form-select" onchange="setConsignorDetails(this)" required>
-                    <option value="">Select Consignor Name</option>
-                    @foreach($users as $user)
-                        @php
-                            $addresses = json_decode($user->address, true);
-                            $formattedAddress = '';
-                            if (!empty($addresses) && is_array($addresses)) {
-                                $first = $addresses[0];
-                                $formattedAddress = trim(
-                                    ($first['full_address'] ?? '') . ', ' .
-                                    ($first['city'] ?? '') . ', ' .
-                                    ($first['pincode'] ?? '')
-                                );
-                            }
-                        @endphp
-                        <option 
-                            value="{{ $user->id }}"
-                            data-gst-consignor="{{ $user->gst_number }}"
-                            data-address-consignor="{{ $formattedAddress }}">
-                            {{ $user->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-   
-            <!-- Consignor GST -->
-            <div class="col-md-3">
-                <label class="form-label">🧾 Consignor GST</label>
-                <input type="text" name="lr[${counter}][consignor_gst]" class="form-control" readonly required>
-            </div>
-   
-            <!-- Consignor Loading Address -->
-            <div class="col-md-3">
-                <label class="form-label">📍 Loading Address</label>
-                <input type="text" name="lr[${counter}][consignor_loading]" class="form-control" readonly required>
-            </div>
-            
-            <!-- Consignee Name -->
-            <div class="col-md-3">
-                <label class="form-label">🏢 Consignee Name</label>
-                <select name="lr[${counter}][consignee_id]" class="form-select" onchange="setConsigneeDetails(this)" required>
-                    <option value="">Select Consignor Name</option>
-                    @foreach($users as $user)
-                        @php
-                            $addresses = json_decode($user->address, true);
-                            $formattedAddress = '';
-                            if (!empty($addresses) && is_array($addresses)) {
-                                $first = $addresses[0];
-                                $formattedAddress = trim(
-                                    ($first['full_address'] ?? '') . ', ' .
-                                    ($first['city'] ?? '') . ', ' .
-                                    ($first['pincode'] ?? '')
-                                );
-                            }
-                        @endphp
-                        <option 
-                            value="{{ $user->id }}"
-                            data-gst-consignee="{{ $user->gst_number }}"
-                            data-address-consignee="{{ $formattedAddress }}">
-                            {{ $user->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <!-- Consignee GST -->
-            <div class="col-md-3">
-                <label class="form-label">🧾 Consignee GST</label>
-                <input type="text" name="lr[${counter}][consignee_gst]" class="form-control" readonly required>
-            </div>
-            
-            <!-- Consignee Unloading Address -->
-            <div class="col-md-3">
-                <label class="form-label">📍 Unloading Address</label>
-                <input type="text" name="lr[${counter}][consignee_unloading]" class="form-control" readonly required>
-            </div>
-        </div>
-        
-        <div class="row">
-            <!-- Vehicle Date -->
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label class="form-label">📅 Vehicle Date</label>
-                    <input type="date" name="lr[${counter}][vehicle_date]" class="form-control" required>
-                </div>
-            </div>
-            
-            <!-- Vehicle Type -->
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label class="form-label">🚛 Vehicle Type</label>
-                    <select name="lr[${counter}][vehicle_type]" class="form-select" required>
-                        <option value="">Select Vehicle</option>
-                        @foreach ($vehicles as $vehicle)
-                            <option value="{{ $vehicle->vehicle_type }}|{{ $vehicle->vehicle_no }}">
-                                {{ $vehicle->vehicle_type }} - {{ $vehicle->vehicle_no }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-   
-            <!-- Vehicle Ownership -->
-            <div class="col-md-4">
-                <label class="form-label">🛻 Vehicle Ownership</label>
-                <div class="d-flex gap-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="lr[${counter}][vehicle_ownership]" value="Own" required>
-                        <label class="form-check-label">Own</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="lr[${counter}][vehicle_ownership]" value="Other" required>
-                        <label class="form-check-label">Other</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row">
-            <!-- Delivery Mode -->
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label class="form-label">🚢 Delivery Mode</label>
-                    <select name="lr[${counter}][delivery_mode]" class="form-select" required>
-                        <option value="">Select Mode</option>
-                        <option value="Road">Road</option>
-                        <option value="Rail">Rail</option>
-                        <option value="Air">Air</option>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- From Location -->
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label class="form-label">📍 From (Origin)</label>
-                    <select name="lr[${counter}][from_location]" class="form-select" required>
-                        <option value="">Select Origin</option>
-                        <option value="Mumbai">Mumbai</option>
-                        <option value="Delhi">Delhi</option>
-                        <option value="Chennai">Chennai</option>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- To Location -->
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label class="form-label">📍 To (Destination)</label>
-                    <select name="lr[${counter}][to_location]" class="form-select" required>
-                        <option value="">Select Destination</option>
-                        <option value="Kolkata">Kolkata</option>
-                        <option value="Hyderabad">Hyderabad</option>
-                        <option value="Pune">Pune</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mt-4">
-            <div class="col-12">
-                <h5 class="mb-3 pb-3">📦 Cargo Description</h5>
-                <!-- Documentation Selection -->
-                <div class="mb-3 d-flex gap-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="lr[${counter}][cargo_description_type]" value="single" checked required>
-                        <label class="form-check-label">Single Document</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="lr[${counter}][cargo_description_type]" value="multiple" required>
-                        <label class="form-check-label">Multiple Documents</label>
-                    </div>
-                </div>
-                
-                <!-- Cargo Details Table -->
-                <div class="table-responsive">
-                    <table class="table table-bordered align-middle text-center">
-                        <thead>
-                            <tr>
-                                <th>No. of Packages</th>
-                                <th>Packaging Type</th>
-                                <th>Description</th>
-                                <th>Weight (kg)</th>
-                                <th>Actual Weight (kg)</th>
-                                <th>Charged Weight (kg)</th>
-                                <th>Document No.</th>
-                                <th>Document Name</th>
-                                <th>Document Date</th>
-                                <th>Eway Bill</th>
-                                <th>Valid Upto</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><input type="number" name="lr[${counter}][cargo][0][packages_no]" class="form-control" required></td>
-                                <td>
-                                    <select name="lr[${counter}][cargo][0][package_type]" class="form-select" required>
-                                        <option value="Pallets">Pallets</option>
-                                        <option value="Cartons">Cartons</option>
-                                        <option value="Bags">Bags</option>
-                                    </select>
-                                </td>
-                                <td><input type="text" name="lr[${counter}][cargo][0][package_description]" class="form-control" required></td>
-                                <td><input type="number" name="lr[${counter}][cargo][0][weight]" class="form-control" required></td>
-                                <td><input type="number" name="lr[${counter}][cargo][0][actual_weight]" class="form-control" required></td>
-                                <td><input type="number" name="lr[${counter}][cargo][0][charged_weight]" class="form-control" required></td>
-                                <td><input type="text" name="lr[${counter}][cargo][0][document_no]" class="form-control" required></td>
-                                <td><input type="text" name="lr[${counter}][cargo][0][document_name]" class="form-control" required></td>
-                                <td><input type="date" name="lr[${counter}][cargo][0][document_date]" class="form-control" required></td>
-                                <td><input type="text" name="lr[${counter}][cargo][0][eway_bill]" class="form-control"required></td>
-                                <td><input type="date" name="lr[${counter}][cargo][0][valid_upto]" class="form-control" required></td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">🗑</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Add Row Button -->
-                <div class="text-end mt-2">
-                    <button type="button" class="btn btn-sm" style="background: #ca2639; color: white;" onclick="addCargoRow(this, ${counter})">
-                        <span style="filter: invert(1);">➕</span> Add Row
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Freight Details Section -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <h5 class="pb-3">🚚 Freight Details</h5>
-                    <div class="table-responsive">
-                        <table class="table table-bordered align-middle text-center">
-                            <thead>
-                                <tr>
-                                    <th>Freight</th>
-                                    <th>LR Charges</th>
-                                    <th>Hamali</th>
-                                    <th>Other Charges</th>
-                                    <th>GST</th>
-                                    <th>Total Freight</th>
-                                    <th>Less Advance</th>
-                                    <th>Balance Freight</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input name="lr[${counter}][freight_amount]" type="number" class="form-control" placeholder="Enter Freight Amount" required></td>
-                                    <td><input name="lr[${counter}][lr_charges]" type="number" class="form-control" placeholder="Enter LR Charges" required></td>
-                                    <td><input name="lr[${counter}][hamali]" type="number" class="form-control" placeholder="Enter Hamali Charges" required></td>
-                                    <td><input name="lr[${counter}][other_charges]" type="number" class="form-control" placeholder="Enter Other Charges" required></td>
-                                    <td><input name="lr[${counter}][gst_amount]" type="number" class="form-control" placeholder="Enter GST Amount" required></td>
-                                    <td><input name="lr[${counter}][total_freight]" type="number" class="form-control" placeholder="Total Freight" required></td>
-                                    <td><input name="lr[${counter}][less_advance]" type="number" class="form-control" placeholder="Less Advance Amount" required></td>
-                                    <td><input name="lr[${counter}][balance_freight]" type="number" class="form-control" placeholder="Balance Freight Amount" required></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Declared Value -->
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label" style="font-weight: bold;">💰 Declared Value (Rs.)</label>
-                        <input type="number" name="lr[${counter}][declared_value]" class="form-control" required>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Remove / Add More LR Buttons -->
-            <div class="d-flex justify-content-end gap-2 mt-3">
-                <button type="button" class="btn btn-outline-warning btn-sm removeLRBtn" onclick="removeLrRow(this)">
-                    <i class="fas fa-trash-alt"></i> Remove
-                </button>
-                <button type="button" class="btn btn-sm addMoreLRBtn" style="background-color: #ca2639; color: #fff;" onclick="addLrRow()">
-                    <i class="fas fa-plus-circle"></i> Add More LR - Consignment
-                </button>
-            </div>
-        </div>
-    `;
-    
-    // Append the new LR section to the container
-    const lrContainer = document.querySelector('#lr-container') || document.body;
-    lrContainer.appendChild(newLrSection);
-    
-    // Initialize any required JavaScript for the new section
-    initNewLrSection(newLrSection);
-   }
-   
-   // Helper function to initialize JavaScript for new LR sections
-   function initNewLrSection(section) {
-    // Initialize any date pickers, select2, etc.
-    // You can add any initialization code needed for the new elements here
-   }
-   
-   // Function to remove an LR section
-   function removeLrRow(button) {
-    const lrSection = button.closest('.row.mt-4');
-    if (lrSection) {
-        lrSection.remove();
-    }
-   }
-   
-   // Function to add a new cargo row
-   function addCargoRow(button, lrIndex) {
-    const tbody = button.closest('.row.mt-4').querySelector('#cargoTableBody') || 
-                 button.closest('.row.mt-4').querySelector('table tbody');
-    
-    const rowCount = tbody.querySelectorAll('tr').length;
-    
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td><input type="number" name="lr[${lrIndex}][cargo][${rowCount}][packages_no]" class="form-control"></td>
-        <td>
-            <select name="lr[${lrIndex}][cargo][${rowCount}][package_type]" class="form-select">
-                <option value="Pallets">Pallets</option>
-                <option value="Cartons">Cartons</option>
-                <option value="Bags">Bags</option>
-            </select>
-        </td>
-        <td><input type="text" name="lr[${lrIndex}][cargo][${rowCount}][package_description]" class="form-control" required></td>
-        <td><input type="number" name="lr[${lrIndex}][cargo][${rowCount}][weight]" class="form-control" required></td>
-        <td><input type="number" name="lr[${lrIndex}][cargo][${rowCount}][actual_weight]" class="form-control" required></td>
-        <td><input type="number" name="lr[${lrIndex}][cargo][${rowCount}][charged_weight]" class="form-control" required></td>
-        <td><input type="text" name="lr[${lrIndex}][cargo][${rowCount}][document_no]" class="form-control" required></td>
-        <td><input type="text" name="lr[${lrIndex}][cargo][${rowCount}][document_name]" class="form-control" required></td>
-        <td><input type="date" name="lr[${lrIndex}][cargo][${rowCount}][document_date]" class="form-control" required></td>
-        <td><input type="text" name="lr[${lrIndex}][cargo][${rowCount}][eway_bill]" class="form-control" required></td>
-        <td><input type="date" name="lr[${lrIndex}][cargo][${rowCount}][valid_upto]" class="form-control" required></td>
-        <td>
-            <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">🗑</button>
-        </td>
-    `;
-    
-    tbody.appendChild(newRow);
-   }
-   
-   // Function to remove a row from cargo table
-   function removeRow(button) {
-    const row = button.closest('tr');
-    if (row) {
-        row.remove();
-    }
-   }
-</script>
+
 
 <!-- JS -->
 <script>
@@ -947,4 +575,84 @@
    }
 </script>
 <!-- add cargo row -->
+
+
+<!-- lr scritp -->
+<script>
+let lrIndex = {{ count($lrData) }}; // Start from the count of existing LRs
+
+function addLrRow() {
+    const container = document.getElementById('lrContainer');
+    const newRow = document.createElement('div');
+    newRow.classList.add('row', 'mt-4');
+    newRow.innerHTML = `
+        <h4 style="margin-bottom: 2%;">🚚 New LR - Consignment Details</h4>
+        <div class="row g-3 mb-3 single-lr-row">
+            <div class="col-md-3">
+                <label class="form-label">LR Number</label>
+                <input type="text" name="lr[${lrIndex}][lr_number]" class="form-control" value="LR-${Date.now()}" readonly>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">LR Date</label>
+                <input type="date" name="lr[${lrIndex}][lr_date]" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Consignor Name</label>
+                <select name="lr[${lrIndex}][consignor_id]" class="form-select" onchange="setConsignorDetails(${lrIndex})" required>
+                    <option value="">Select Consignor</option>
+                    @foreach($users as $user)
+                        @php
+                            $addresses = json_decode($user->address, true);
+                            $formattedAddress = '';
+                            if (!empty($addresses) && is_array($addresses)) {
+                                $first = $addresses[0];
+                                $formattedAddress = trim(
+                                    ($first['full_address'] ?? '') . ', ' .
+                                    ($first['city'] ?? '') . ', ' .
+                                    ($first['pincode'] ?? '')
+                                );
+                            }
+                        @endphp
+                        <option value="{{ $user->id }}"
+                            data-gst-consignor="{{ $user->gst_number }}"
+                            data-address-consignor="{{ $formattedAddress }}">
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Consignor GST</label>
+                <input type="text" name="lr[${lrIndex}][consignor_gst]" id="consignor_gst_${lrIndex}" class="form-control" readonly>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Loading Address</label>
+                <input type="text" name="lr[${lrIndex}][consignor_loading]" id="consignor_loading_${lrIndex}" class="form-control" readonly>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeLrRow(this)">
+                    <i class="fas fa-trash-alt"></i> Remove
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(newRow);
+    lrIndex++;
+}
+
+function removeLrRow(button) {
+    const section = button.closest('.row.mt-4');
+    if (section) section.remove();
+}
+
+function setConsignorDetails(index) {
+    const select = document.querySelector(`select[name="lr[${index}][consignor_id]"]`);
+    const gst = select.options[select.selectedIndex].dataset.gstConsignor || '';
+    const address = select.options[select.selectedIndex].dataset.addressConsignor || '';
+
+    document.getElementById(`consignor_gst_${index}`).value = gst;
+    document.getElementById(`consignor_loading_${index}`).value = address;
+}
+</script>
+
 @endsection
